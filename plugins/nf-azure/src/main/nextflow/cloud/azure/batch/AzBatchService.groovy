@@ -66,7 +66,7 @@ import com.azure.core.exception.HttpResponseException
 import com.azure.core.exception.ResourceNotFoundException
 import com.azure.core.http.rest.PagedIterable
 import com.azure.identity.ClientSecretCredentialBuilder
-import com.azure.identity.ManagedIdentityCredentialBuilder
+import com.azure.identity.DefaultAzureCredentialBuilder
 import dev.failsafe.Failsafe
 import dev.failsafe.RetryPolicy
 import dev.failsafe.event.EventListener
@@ -300,11 +300,12 @@ class AzBatchService implements Closeable {
         log.debug '[AZURE BATCH] Creating Azure Batch client using Managed Identity credentials'
 
         final clientId = config.managedIdentity().clientId
-        final credential = new ManagedIdentityCredentialBuilder()
+        final credential = new DefaultAzureCredentialBuilder()
 
-        if (clientId)
+        if (clientId) {
             log.debug "[AZURE BATCH] Managed Identity Client ID: ${clientId}"
-            credential.clientId(clientId)
+            credential.managedIdentityClientId(clientId)
+        }
 
         return credential.build()
     }
