@@ -109,6 +109,8 @@ class AzBatchService implements Closeable {
 
     static final private Map<String,AzVmPoolSpec> allPools = new HashMap<>(50)
 
+    static private final List<String> QUOTA_ERROR_CODES = ['ActiveJobAndScheduleQuotaReached', 'TaskQuotaReached']
+
     AzConfig config
 
     Map<TaskProcessor,String> allJobIds = new HashMap<>(50)
@@ -937,8 +939,21 @@ class AzBatchService implements Closeable {
         final cond = new Predicate<? extends Throwable>() {
             @Override
             boolean test(Throwable t) {
-                if( t instanceof HttpResponseException && t.response.statusCode in RETRY_CODES )
-                    return true
+                if( t instanceof HttpResponseException ) {
+                    if( t.response.statusCode in RETRY_CODES )
+                        return true
+                    // Check for quota errors if retryQuotaErrors is enabled
+                    if( config.batch().retryQuotaErrors ) {
+                        try {
+                            def body = t.response.getBodyAsString().block()
+                            def error = new JsonSlurper().parseText(body) as Map
+                            return error?.code in QUOTA_ERROR_CODES
+                        }
+                        catch(Exception e) {
+                            return false
+                        }
+                    }
+                }
                 if( t instanceof IOException || t.cause instanceof IOException )
                     return true
                 if( t instanceof TimeoutException || t.cause instanceof TimeoutException )
@@ -946,9 +961,9 @@ class AzBatchService implements Closeable {
                 return false
             }
         }
-        // create the retry policy object
+        // create the retry policy object  
         final policy = retryPolicy(cond)
-        // apply the action with
+        // apply the action with retry
         return Failsafe.with(policy).get(action)
     }
 }

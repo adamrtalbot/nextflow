@@ -437,6 +437,11 @@ The following settings are available:
 `azure.storage.tokenDuration`
 : The duration of the shared access signature token created by Nextflow when the `sasToken` option is *not* specified (default: `48h`).
 
+`azure.batch.retryQuotaErrors`
+: :::{versionadded} 24.10.0
+  :::
+: When `true` (default), Nextflow will automatically retry task submissions that fail due to Azure Batch quota limits being reached. Set to `false` to disable this behavior and fail immediately on quota errors.
+
 (config-charliecloud)=
 
 ## `charliecloud`

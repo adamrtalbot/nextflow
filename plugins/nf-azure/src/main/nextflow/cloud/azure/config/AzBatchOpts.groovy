@@ -54,6 +54,7 @@ class AzBatchOpts implements CloudTransferOptions {
     Boolean deleteJobsOnCompletion
     Boolean deletePoolsOnCompletion
     Boolean deleteTasksOnCompletion
+    Boolean retryQuotaErrors
     CopyToolInstallMode copyToolInstallMode
 
     Map<String,AzPoolOpts> pools
@@ -71,6 +72,7 @@ class AzBatchOpts implements CloudTransferOptions {
         deleteJobsOnCompletion = config.deleteJobsOnCompletion
         deletePoolsOnCompletion = config.deletePoolsOnCompletion
         deleteTasksOnCompletion = config.deleteTasksOnCompletion
+        retryQuotaErrors = config.retryQuotaErrors != Boolean.FALSE
         pools = parsePools(config.pools instanceof Map ? config.pools as Map<String,Map> : Collections.<String,Map>emptyMap())
         maxParallelTransfers = config.maxParallelTransfers ? config.maxParallelTransfers as int : MAX_TRANSFER
         maxTransferAttempts = config.maxTransferAttempts ? config.maxTransferAttempts as int : MAX_TRANSFER_ATTEMPTS
