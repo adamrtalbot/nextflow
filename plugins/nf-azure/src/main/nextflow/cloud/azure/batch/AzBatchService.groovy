@@ -940,6 +940,7 @@ class AzBatchService implements Closeable {
             @Override
             boolean test(Throwable t) {
                 if( t instanceof HttpResponseException ) {
+                    log.debug "Azure Batch error: ${t.response.statusCode} - ${t.response.bodyAsString}"
                     if( t.response.statusCode in RETRY_CODES )
                         return true
                     // Check for quota errors if retryQuotaErrors is enabled
