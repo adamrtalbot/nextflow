@@ -59,6 +59,13 @@ import com.azure.compute.batch.models.OutputFileUploadConfig
 import com.azure.compute.batch.models.ResourceFile
 import com.azure.compute.batch.models.UserIdentity
 import com.azure.compute.batch.models.VirtualMachineConfiguration
+import com.azure.core.http.policy.RetryPolicy as AzureRetryPolicy
+import com.azure.core.http.policy.RetryOptions
+import com.azure.core.http.policy.ExponentialBackoff
+import com.azure.core.http.policy.RetryStrategy
+import com.azure.core.http.policy.ExponentialBackoffOptions
+import com.azure.storage.common.policy.RequestRetryOptions
+import com.azure.storage.common.policy.RetryPolicyType
 import com.azure.core.credential.AzureNamedKeyCredential
 import com.azure.core.credential.TokenCredential
 import com.azure.core.exception.ClientAuthenticationException
@@ -68,7 +75,7 @@ import com.azure.core.http.rest.PagedIterable
 import com.azure.identity.ClientSecretCredentialBuilder
 import com.azure.identity.ManagedIdentityCredentialBuilder
 import dev.failsafe.Failsafe
-import dev.failsafe.RetryPolicy
+import dev.failsafe.RetryPolicy as FailsafeRetryPolicy
 import dev.failsafe.event.EventListener
 import dev.failsafe.event.ExecutionAttemptedEvent
 import dev.failsafe.function.CheckedSupplier
@@ -79,6 +86,7 @@ import groovy.util.logging.Slf4j
 import nextflow.Global
 import nextflow.Session
 import nextflow.cloud.azure.config.AzConfig
+import nextflow.cloud.azure.config.AzRetryConfig
 import nextflow.cloud.azure.config.AzFileShareOpts
 import nextflow.cloud.azure.config.AzPoolOpts
 import nextflow.cloud.azure.config.AzStartTaskOpts
@@ -94,6 +102,7 @@ import nextflow.util.CacheHelper
 import nextflow.util.MemoryUnit
 import nextflow.util.MustacheTemplateEngine
 import nextflow.util.Rnd
+
 /**
  * Implements Azure Batch operations for Nextflow executor
  *
@@ -309,10 +318,31 @@ class AzBatchService implements Closeable {
         return credential.build()
     }
 
+    @Memoized
+    protected RetryOptions retryOptions() {
+        final cfg = config.retryConfig()
+        return retryOptions0(cfg)
+    }
+
+    protected RetryOptions retryOptions0(AzRetryConfig cfg) {
+        final retryDelay = java.time.Duration.ofMillis(cfg.delay.millis)
+        final maxRetryDelay = java.time.Duration.ofMillis(cfg.maxDelay.millis)
+        
+        // Create exponential backoff options
+        final exponentialOptions = new ExponentialBackoffOptions()
+            .setMaxRetries(cfg.maxAttempts)
+            .setBaseDelay(retryDelay)
+            .setMaxDelay(maxRetryDelay)
+
+        // Create retry options with exponential backoff
+        return new RetryOptions(exponentialOptions)
+    }
+
     protected BatchClient createBatchClient() {
         log.debug "[AZURE BATCH] Executor options=${config.batch()}"
 
         final builder = new BatchClientBuilder()
+                
         if( config.managedIdentity().isConfigured() )
             builder.credential( createBatchCredentialsWithManagedIdentity() )
         else if( config.activeDirectory().isConfigured() )
@@ -322,6 +352,8 @@ class AzBatchService implements Closeable {
 
         if( config.batch().endpoint )
             builder.endpoint(config.batch().endpoint)
+
+        builder.retryOptions(retryOptions())
 
         return builder.buildClient()
     }
@@ -906,7 +938,7 @@ class AzBatchService implements Closeable {
      * @param cond A predicate that determines when a retry should be triggered
      * @return The {@link RetryPolicy} instance
      */
-    protected <T> RetryPolicy<T> retryPolicy(Predicate<? extends Throwable> cond) {
+    protected <T> FailsafeRetryPolicy<T> retryPolicy(Predicate<? extends Throwable> cond) {
         final cfg = config.retryConfig()
         final listener = new EventListener<ExecutionAttemptedEvent<T>>() {
             @Override
@@ -914,7 +946,7 @@ class AzBatchService implements Closeable {
                 log.debug("Azure TooManyRequests response error - attempt: ${event.attemptCount}; reason: ${event.lastFailure.message}")
             }
         }
-        return RetryPolicy.<T>builder()
+        return FailsafeRetryPolicy.<T>builder()
                 .handleIf(cond)
                 .withBackoff(cfg.delay.toMillis(), cfg.maxDelay.toMillis(), ChronoUnit.MILLIS)
                 .withMaxAttempts(cfg.maxAttempts)
@@ -924,6 +956,7 @@ class AzBatchService implements Closeable {
     }
 
     final private static List<Integer> RETRY_CODES = List.of(408, 429, 500, 502, 503, 504)
+    final private static List<Integer> IGNORE_CODES = List.of(409)
 
     /**
      * Carry out the invocation of the specified action using a retry policy
@@ -937,8 +970,13 @@ class AzBatchService implements Closeable {
         final cond = new Predicate<? extends Throwable>() {
             @Override
             boolean test(Throwable t) {
-                if( t instanceof HttpResponseException && t.response.statusCode in RETRY_CODES )
-                    return true
+                if( t instanceof HttpResponseException ) {
+                    // ignore pool exists error (don't retry)
+                    if( t.response.statusCode in IGNORE_CODES )
+                        return false
+                    // retry on common failure status codes    
+                    return t.response.statusCode in RETRY_CODES
+                }
                 if( t instanceof IOException || t.cause instanceof IOException )
                     return true
                 if( t instanceof TimeoutException || t.cause instanceof TimeoutException )

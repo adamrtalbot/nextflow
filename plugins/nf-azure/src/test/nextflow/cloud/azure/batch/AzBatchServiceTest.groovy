@@ -24,6 +24,9 @@ import nextflow.util.Duration
 import nextflow.util.MemoryUnit
 import spock.lang.Specification
 import spock.lang.Unroll
+import com.azure.core.exception.HttpResponseException
+import com.azure.core.http.HttpResponse
+import dev.failsafe.function.CheckedSupplier
 /**
  *
  * @author Paolo Di Tommaso <paolo.ditommaso@gmail.com>
@@ -737,6 +740,90 @@ class AzBatchServiceTest extends Specification {
         CONFIG                                          | EXPECTED
         [:]                                             | null
         [managedIdentity: [clientId: 'client-123']]     | 'client-123'
+    }
+
+    def 'should create retry policy with custom config' () {
+        given:
+        def retryCfg = [delay: '100ms', maxDelay: '200ms', maxAttempts: 300]
+        def CONFIG = [batch:[location: 'northeurope'], retryPolicy: retryCfg]
+        def exec = Mock(AzBatchExecutor) {getConfig() >> new AzConfig(CONFIG) }
+        AzBatchService svc = Spy(new AzBatchService(exec))
+        def predicate = Mock(Predicate)
+
+        when:
+        def policy = svc.retryPolicy(predicate)
+        
+        then:
+        policy.config.delay.toMillis() == 100
+        policy.config.maxDelay.toMillis() == 200
+        policy.config.maxAttempts == 300
+    }
+
+    def 'should apply retry policy for HTTP errors' () {
+        given:
+        def CONFIG = [batch:[location: 'northeurope']]
+        def exec = Mock(AzBatchExecutor) {getConfig() >> new AzConfig(CONFIG) }
+        AzBatchService svc = Spy(new AzBatchService(exec))
+        def action = Mock(CheckedSupplier)
+        def httpError = new HttpResponseException(Mock(HttpResponse) {getStatusCode() >> 429})
+
+        when:
+        svc.apply(action)
+        
+        then:
+        1 * action.get() >> { throw httpError }
+        1 * action.get() >> 'result'
+        
+        and:
+        noExceptionThrown()
+    }
+
+    def 'should apply retry policy for IO errors' () {
+        given:
+        def CONFIG = [batch:[location: 'northeurope']]
+        def exec = Mock(AzBatchExecutor) {getConfig() >> new AzConfig(CONFIG) }
+        AzBatchService svc = Spy(new AzBatchService(exec))
+        def action = Mock(CheckedSupplier)
+        def ioError = new IOException("Network error")
+
+        when:
+        svc.apply(action)
+        
+        then:
+        1 * action.get() >> { throw ioError }
+        1 * action.get() >> 'result'
+        
+        and:
+        noExceptionThrown()
+    }
+
+    def 'should ignore pool exists error' () {
+        given:
+        def CONFIG = [batch:[location: 'northeurope']]
+        def exec = Mock(AzBatchExecutor) {getConfig() >> new AzConfig(CONFIG) }
+        AzBatchService svc = Spy(new AzBatchService(exec))
+        def action = Mock(CheckedSupplier)
+        def poolExistsError = new HttpResponseException(
+            Mock(HttpResponse) {
+                getStatusCode() >> 409
+                getBodyAsString() >> '''{
+                    "odata.metadata":"https://seqeralabs.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element",
+                    "code":"PoolExists",
+                    "message":{
+                        "lang":"en-US",
+                        "value":"The specified pool already exists."
+                    }
+                }'''
+            }
+        )
+
+        when:
+        svc.apply(action)
+        
+        then:
+        1 * action.get() >> { throw poolExistsError }
+        and:
+        noExceptionThrown()
     }
 
 }
