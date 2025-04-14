@@ -25,12 +25,15 @@ import nextflow.processor.TaskBean
  */
 class AzBatchScriptLauncher extends BashWrapperBuilder {
 
+    private boolean useSdkFileTransfer
+
     AzBatchScriptLauncher(TaskBean bean, AzBatchExecutor executor) {
         super(bean, new AzFileCopyStrategy(bean, executor))
+        this.useSdkFileTransfer = executor.config.batch().useSdkFileTransfer
     }
 
     @Override
     protected boolean shouldUnstageOutputs() {
-        return true
+        return !useSdkFileTransfer
     }
 }

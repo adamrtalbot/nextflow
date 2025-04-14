@@ -55,6 +55,7 @@ class AzBatchOpts implements CloudTransferOptions {
     Boolean deletePoolsOnCompletion
     Boolean deleteTasksOnCompletion
     CopyToolInstallMode copyToolInstallMode
+    Boolean useSdkFileTransfer
 
     Map<String,AzPoolOpts> pools
 
@@ -76,6 +77,7 @@ class AzBatchOpts implements CloudTransferOptions {
         maxTransferAttempts = config.maxTransferAttempts ? config.maxTransferAttempts as int : MAX_TRANSFER_ATTEMPTS
         delayBetweenAttempts = config.delayBetweenAttempts ? config.delayBetweenAttempts as Duration : DEFAULT_DELAY_BETWEEN_ATTEMPTS
         copyToolInstallMode = config.copyToolInstallMode as CopyToolInstallMode
+        useSdkFileTransfer = config.useSdkFileTransfer == null ? false : config.useSdkFileTransfer as Boolean
     }
 
     static Map<String,AzPoolOpts> parsePools(Map<String,Map> pools) {

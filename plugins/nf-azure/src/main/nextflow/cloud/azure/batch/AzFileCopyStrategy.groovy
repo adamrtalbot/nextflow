@@ -41,6 +41,7 @@ class AzFileCopyStrategy extends SimpleFileCopyStrategy {
     private Duration delayBetweenAttempts
     private String sasToken
     private Path remoteBinDir
+    private boolean useSdkFileTransfer
 
     protected AzFileCopyStrategy() {}
 
@@ -52,6 +53,12 @@ class AzFileCopyStrategy extends SimpleFileCopyStrategy {
         this.maxParallelTransfers = config.batch().maxParallelTransfers
         this.maxTransferAttempts = config.batch().maxTransferAttempts
         this.delayBetweenAttempts = config.batch().delayBetweenAttempts
+        // Check if the SDK file transfer is enabled
+        this.useSdkFileTransfer = config.batch().useSdkFileTransfer
+        
+        if (useSdkFileTransfer) {
+            log.debug "[AZURE BATCH] Using Azure Batch SDK for file transfers instead of azcopy"
+        }
     }
 
     @Override
@@ -63,15 +70,18 @@ class AzFileCopyStrategy extends SimpleFileCopyStrategy {
         final copy = environment ? new LinkedHashMap<String,String>(environment) : new LinkedHashMap<String,String>()
         copy.remove('PATH')
         copy.put('PATH', '$PWD/.nextflow-bin:$AZ_BATCH_NODE_SHARED_DIR/bin/:$PATH')
-        copy.put('AZCOPY_LOG_LOCATION', '$PWD/.azcopy_log')
-        copy.put('AZ_SAS', sasToken)
+        
+        // Only add AzCopy related env vars if we're not using SDK file transfer
+        if (!useSdkFileTransfer) {
+            copy.put('AZCOPY_LOG_LOCATION', '$PWD/.azcopy_log')
+            copy.put('AZ_SAS', sasToken)
+        }
 
         // finally render the environment
         final envSnippet = super.getEnvScript(copy,false)
         if( envSnippet )
             result << envSnippet
         return result.toString()
-
     }
 
     static String uploadCmd(String source, Path targetDir) {
@@ -80,16 +90,28 @@ class AzFileCopyStrategy extends SimpleFileCopyStrategy {
 
     @Override
     String getBeforeStartScript() {
-        AzBashLib.script(config.azcopy(), maxParallelTransfers, maxTransferAttempts, delayBetweenAttempts)
+        // Always include AzCopy script for bin directory handling
+        return AzBashLib.script(config.azcopy(), maxParallelTransfers, maxTransferAttempts, delayBetweenAttempts)
     }
 
     @Override
     String getStageInputFilesScript(Map<String, Path> inputFiles) {
-        String result = ( remoteBinDir ? """\
-            nxf_az_download '${AzHelper.toHttpUrl(remoteBinDir)}' \$PWD/.nextflow-bin
-            chmod +x \$PWD/.nextflow-bin/* || true
-            """.stripIndent(true) : '' )
-
+        // Always download the bin dir if available - Azure Batch SDK can't download directories
+        String result = ""
+        if (remoteBinDir) {
+            result = """\
+                nxf_az_download '${AzHelper.toHttpUrl(remoteBinDir)}' \$PWD/.nextflow-bin
+                chmod +x \$PWD/.nextflow-bin/* || true
+                """.stripIndent(true)
+        }
+        
+        // When using SDK file transfer, we don't need to download input files
+        // They will be automatically downloaded by the Azure Batch service
+        if (useSdkFileTransfer) {
+            return result
+        }
+        
+        // Otherwise, add the standard file download script
         result += 'downloads=(true)\n'
         result += super.getStageInputFilesScript(inputFiles) + '\n'
         result += 'nxf_parallel "${downloads[@]}"\n'
@@ -101,6 +123,11 @@ class AzFileCopyStrategy extends SimpleFileCopyStrategy {
      */
     @Override
     String stageInputFile( Path path, String targetName ) {
+        // When using SDK file transfer, we don't need to stage the file
+        if (useSdkFileTransfer) {
+            return null
+        }
+        
         // third param should not be escaped, because it's used in the grep match rule
         def stage_cmd = maxTransferAttempts > 1
                 ? "downloads+=(\"nxf_cp_retry nxf_az_download '${AzHelper.toHttpUrl(path)}' ${Escape.path(targetName)}\")"
@@ -113,6 +140,11 @@ class AzFileCopyStrategy extends SimpleFileCopyStrategy {
      */
     @Override
     String getUnstageOutputFilesScript(List<String> outputFiles, Path targetDir) {
+        // When using SDK file transfer, output files are handled by Azure Batch OutputFiles
+        if (useSdkFileTransfer) {
+            return null
+        }
+        
         final patterns = normalizeGlobStarPaths(outputFiles)
         // create a bash script that will copy the out file to the working directory
         log.trace "[AZURE BATCH] Unstaging file path: $patterns"
@@ -156,7 +188,11 @@ class AzFileCopyStrategy extends SimpleFileCopyStrategy {
      */
     @Override
     String copyFile( String name, Path target ) {
-        "nxf_az_upload ${Escape.path(name)} '${AzHelper.toHttpUrl(target.parent)}'"
+        // When using SDK file transfer, output files are handled by Azure Batch OutputFiles
+        if (useSdkFileTransfer) {
+            return "true" // No-op command that succeeds
+        }
+        return "nxf_az_upload ${Escape.path(name)} '${AzHelper.toHttpUrl(target.parent)}'"
     }
 
     /**
@@ -173,5 +209,4 @@ class AzFileCopyStrategy extends SimpleFileCopyStrategy {
     String pipeInputFile( Path path ) {
         " < ${Escape.path(path.getFileName())}"
     }
-
 }

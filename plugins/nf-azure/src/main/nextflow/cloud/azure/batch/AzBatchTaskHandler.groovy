@@ -127,6 +127,12 @@ class AzBatchTaskHandler extends TaskHandler implements FusionAwareTask {
                 // when task exist code is not defined and there is a Azure Batch task failure raise an exception with Azure's failure message
                 task.error = unrecoverable ? new ProcessUnrecoverableException(reason) : new ProcessException(reason)
             }
+            
+            // Debug log for output files
+            if (executor.config.batch().useSdkFileTransfer) {
+                log.debug "[AZURE BATCH] Task completed with SDK file transfer - output files should be staged via OutputFiles"
+            }
+            
             deleteTask(taskKey, task)
             return true
         }

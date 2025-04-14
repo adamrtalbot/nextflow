@@ -344,6 +344,11 @@ The following settings are available:
   :::
 : When the workflow completes, set all jobs to terminate on task completion. (default: `true`).
 
+`azure.batch.useSdkFileTransfer`
+: :::{versionadded} 25.05.0-edge
+  :::
+: When `true`, uses the Azure Batch SDK's native ResourceFiles and OutputFiles for file transfers instead of azcopy scripts. This eliminates the need for azcopy and simplifies file transfers. Default: `false`.
+
 `azure.batch.pools.<name>.autoScale`
 : Enable autoscaling feature for the pool identified with `<name>`.
 

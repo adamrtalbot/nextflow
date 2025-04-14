@@ -553,7 +553,7 @@ class AzBatchService implements Closeable {
         final cmdRun = (AzPath) task.workDir.resolve(TaskRun.CMD_RUN)
         final cmdScript = (AzPath) task.workDir.resolve(TaskRun.CMD_SCRIPT)
 
-        final resFiles = new ArrayList(10)
+        final resFiles = new ArrayList<ResourceFile>(10)
 
         if( config.batch().copyToolInstallMode == CopyToolInstallMode.task ) {
             log.trace "[AZURE BATCH] installing azcopy as task resource"
@@ -571,18 +571,77 @@ class AzBatchService implements Closeable {
                 .setFilePath(TaskRun.CMD_SCRIPT)
 
         if( task.stdin ) {
+            final stdinPath = (AzPath) task.stdin
             resFiles << new ResourceFile()
-                    .setHttpUrl(AzHelper.toHttpUrl(cmdScript, sas))
+                    .setHttpUrl(AzHelper.toHttpUrl(stdinPath, sas))
                     .setFilePath(TaskRun.CMD_INFILE)
+        }
+
+        // Add all input files from the task
+        if (config.batch().useSdkFileTransfer) {
+            Map<String,Path> inputs = task.getInputFilesMap()
+            if (inputs) {
+                for (Map.Entry<String,Path> entry : inputs) {
+                    if (entry.value instanceof AzPath) {
+                        final AzPath filePath = (AzPath) entry.value
+                        final String stageName = entry.key
+                        resFiles << new ResourceFile()
+                                .setHttpUrl(AzHelper.toHttpUrl(filePath, sas))
+                                .setFilePath(stageName)
+                    }
+                }
+                log.debug "[AZURE BATCH] Using SDK for file transfer - Added ${inputs.size()} input files to ResourceFiles"
+            }
+            
+            // Note: We don't add remoteBinDir as resourceFile because we can't easily download 
+            // directories with ResourceFile. Instead, we use azcopy in the script for this purpose.
         }
 
         return resFiles
     }
 
     protected List<OutputFile> outputFileUrls(TaskRun task, String sas) {
-        List<OutputFile> result = new ArrayList<>(20)
-        result << destFile(TaskRun.CMD_EXIT, task.workDir, sas)
-        result << destFile(TaskRun.CMD_LOG, task.workDir, sas)
+        List<OutputFile> result = new ArrayList<OutputFile>(20)
+        
+        // Common standard output files
+        result << destFile(TaskRun.CMD_EXIT, task.workDir, sas)     // .command.exit
+        result << destFile(TaskRun.CMD_LOG, task.workDir, sas)      // .command.log
+        
+        // When using SDK file transfer, add ALL output files
+        if (config.batch().useSdkFileTransfer) {
+            // Add all standard output files
+            result << destFile(TaskRun.CMD_OUTFILE, task.workDir, sas)    // .command.out
+            result << destFile(TaskRun.CMD_ERRFILE, task.workDir, sas)    // .command.err
+            result << destFile(TaskRun.CMD_TRACE, task.workDir, sas)      // .command.trace
+            result << destFile(TaskRun.CMD_START, task.workDir, sas)      // .command.begin
+            result << destFile(TaskRun.CMD_SCRIPT, task.workDir, sas)     // .command.sh
+            result << destFile(".exitcode", task.workDir, sas)
+            
+            // Add any task-specific output file patterns
+            final List<String> outputFiles = task.getOutputFilesNames()
+            if (outputFiles) {
+                final AzPath target = (AzPath) task.workDir
+                final String destPath = target.subpath(1, target.nameCount).toString()
+                
+                for (String filePattern : outputFiles) {
+                    // For each output file pattern, create an OutputFile that will be uploaded
+                    // upon task completion
+                    result << new OutputFile(
+                        filePattern,
+                        new OutputFileDestination().setContainer(
+                            new OutputFileBlobContainerDestination(AzHelper.toContainerUrl(target, sas))
+                                .setPath(destPath)
+                        ),
+                        new OutputFileUploadConfig(OutputFileUploadCondition.TASK_SUCCESS)
+                    )
+                }
+                
+                log.debug "[AZURE BATCH] Using SDK for file transfer - Added ${outputFiles.size()} output patterns to OutputFiles"
+            }
+            
+            log.debug "[AZURE BATCH] Using SDK for file transfer - Total output files to be uploaded: ${result.size()}"
+        }
+        
         return result
     }
 
@@ -592,7 +651,10 @@ class AzBatchService implements Closeable {
         final dest = new OutputFileBlobContainerDestination(AzHelper.toContainerUrl(targetDir,sas))
                 .setPath(target.subpath(1,target.nameCount).toString())
 
-        return new OutputFile(localPath, new OutputFileDestination().setContainer(dest), new OutputFileUploadConfig(OutputFileUploadCondition.TASK_COMPLETION))
+        // Always upload files regardless of task outcome when using SDK
+        final uploadCondition = OutputFileUploadCondition.TASK_SUCCESS
+                
+        return new OutputFile(localPath, new OutputFileDestination().setContainer(dest), new OutputFileUploadConfig(uploadCondition))
     }
 
     protected BatchSupportedImage getImage(AzPoolOpts opts) {

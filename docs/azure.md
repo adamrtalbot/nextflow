@@ -281,6 +281,27 @@ A node may become overprovisioned if the tasks are using more than their fractio
 The `cpus` directive is used to determine the number of task slots, not the number of cores.
 :::
 
+### File transfer with Azure Batch SDK
+
+By default, nf-azure uses the azcopy utility to stage input and output files between Azure Blob Storage and Batch compute nodes. As an alternative, you can use the Azure Batch SDK's built-in file transfer capabilities by setting the `useSdkFileTransfer` option to `true`:
+
+```groovy
+azure {
+    batch {
+        useSdkFileTransfer = true
+    }
+}
+```
+
+When enabled, input files are automatically downloaded to the node by Azure Batch before task execution, and output files are automatically uploaded to blob storage after task completion. This eliminates the need for azcopy and can simplify the file transfer process.
+
+Benefits of using SDK-based file transfers:
+- Reduced dependency on external tools
+- Potentially simpler configuration 
+- Native integration with Azure Batch service
+
+Note that when using SDK-based file transfers with Fusion, binaries in the remoteBinDir are still downloaded using azcopy.
+
 ### Requirements on pre-existing named pools
 
 When Nextflow is configured to use a pool already available in the Batch account, the target pool must satisfy the following requirements:
