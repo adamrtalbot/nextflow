@@ -16,6 +16,15 @@
 
 Nextflow is a workflow system for creating scalable, portable, and reproducible workflows. It is based on the dataflow programming model, which greatly simplifies the writing of parallel and distributed pipelines, allowing you to focus on the flow of data and computation. Nextflow can deploy workflows on a variety of execution platforms, including your local machine, HPC schedulers, AWS Batch, Azure Batch, Google Cloud Batch, and Kubernetes. Additionally, it supports many ways to manage your software dependencies, including Conda, Spack, Docker, Podman, Singularity, and more.
 
+!!! warning
+    This is a fork of the Nextflow which was an experiment to see if we can use the native Azure Batch file staging feature instead of azcopy.
+
+    Unfortunately, it has two issues:
+    - Each file is uploaded with a blob prefix, so an output path like `*.txt` becomes az://workdir/*.txt/test.txt`
+    - It does not support uploading directories, so `outputs/` will fail and never be uploaded, although this could be solved by adding a `**` suffix to any directory pattern.
+
+    Until these issues are resolved, we will continue to use azcopy for file staging.
+
 ## Quick start
 
 Install Nextflow with a single command:
