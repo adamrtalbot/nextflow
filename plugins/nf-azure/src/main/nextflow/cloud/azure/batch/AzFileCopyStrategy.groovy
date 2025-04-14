@@ -96,22 +96,24 @@ class AzFileCopyStrategy extends SimpleFileCopyStrategy {
 
     @Override
     String getStageInputFilesScript(Map<String, Path> inputFiles) {
-        // Always download the bin dir if available - Azure Batch SDK can't download directories
-        String result = ""
-        if (remoteBinDir) {
-            result = """\
-                nxf_az_download '${AzHelper.toHttpUrl(remoteBinDir)}' \$PWD/.nextflow-bin
+        // When using SDK file transfer, we don't need to stage any files
+        // They will be automatically downloaded by the Azure Batch service including bin files
+        if (useSdkFileTransfer) {
+            // Make bin files executable if they exist
+            if (remoteBinDir) {
+                return """\
                 chmod +x \$PWD/.nextflow-bin/* || true
                 """.stripIndent(true)
+            }
+            return ""
         }
         
-        // When using SDK file transfer, we don't need to download input files
-        // They will be automatically downloaded by the Azure Batch service
-        if (useSdkFileTransfer) {
-            return result
-        }
+        // Otherwise, use the azcopy approach
+        String result = ( remoteBinDir ? """\
+            nxf_az_download '${AzHelper.toHttpUrl(remoteBinDir)}' \$PWD/.nextflow-bin
+            chmod +x \$PWD/.nextflow-bin/* || true
+            """.stripIndent(true) : '' )
         
-        // Otherwise, add the standard file download script
         result += 'downloads=(true)\n'
         result += super.getStageInputFilesScript(inputFiles) + '\n'
         result += 'nxf_parallel "${downloads[@]}"\n'
