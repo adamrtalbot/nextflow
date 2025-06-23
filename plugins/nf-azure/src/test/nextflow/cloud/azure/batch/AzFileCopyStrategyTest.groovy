@@ -180,16 +180,28 @@ class AzFileCopyStrategyTest extends Specification {
                     local target=$2
                     local basedir=$(dirname $2)
                     local ret
+                    local original_error
                     mkdir -p "$basedir"
                 
-                    ret=$(azcopy cp "$source?$AZ_SAS" "$target" 2>&1) || {
-                        ## if fails check if it was trying to download a directory
-                        mkdir -p $target
-                        azcopy cp "$source/*?$AZ_SAS" "$target" --recursive >/dev/null || {
-                            rm -rf $target
+                    # First attempt: try to download as a file
+                    original_error=$(azcopy cp "$source?$AZ_SAS" "$target" 2>&1) || {
+                        # Check if the error suggests this might be a directory
+                        # azcopy typically returns specific error messages for directory-related issues
+                        if [[ "$original_error" == *"please consider using recursive option"* || "$original_error" == *"is a directory"* || "$original_error" == *"source is a folder"* || "$original_error" == *"resource is a directory"* ]]; then
+                            # Only create directory if error suggests source is a directory
+                            mkdir -p "$target"
+                            azcopy cp "$source/*?$AZ_SAS" "$target" --recursive >/dev/null || {
+                                rm -rf "$target"
+                                >&2 echo "Unable to download path: $source"
+                                >&2 echo "Original error: $original_error"
+                                exit 1
+                            }
+                        else
+                            # For other errors (memory, network, permissions, etc.), don't create directory
                             >&2 echo "Unable to download path: $source"
+                            >&2 echo "Error: $original_error"
                             exit 1
-                        }
+                        fi
                     }
                 }
                 
@@ -317,16 +329,28 @@ class AzFileCopyStrategyTest extends Specification {
                     local target=$2
                     local basedir=$(dirname $2)
                     local ret
+                    local original_error
                     mkdir -p "$basedir"
                 
-                    ret=$(azcopy cp "$source?$AZ_SAS" "$target" 2>&1) || {
-                        ## if fails check if it was trying to download a directory
-                        mkdir -p $target
-                        azcopy cp "$source/*?$AZ_SAS" "$target" --recursive >/dev/null || {
-                            rm -rf $target
+                    # First attempt: try to download as a file
+                    original_error=$(azcopy cp "$source?$AZ_SAS" "$target" 2>&1) || {
+                        # Check if the error suggests this might be a directory
+                        # azcopy typically returns specific error messages for directory-related issues
+                        if [[ "$original_error" == *"please consider using recursive option"* || "$original_error" == *"is a directory"* || "$original_error" == *"source is a folder"* || "$original_error" == *"resource is a directory"* ]]; then
+                            # Only create directory if error suggests source is a directory
+                            mkdir -p "$target"
+                            azcopy cp "$source/*?$AZ_SAS" "$target" --recursive >/dev/null || {
+                                rm -rf "$target"
+                                >&2 echo "Unable to download path: $source"
+                                >&2 echo "Original error: $original_error"
+                                exit 1
+                            }
+                        else
+                            # For other errors (memory, network, permissions, etc.), don't create directory
                             >&2 echo "Unable to download path: $source"
+                            >&2 echo "Error: $original_error"
                             exit 1
-                        }
+                        fi
                     }
                 }
 
@@ -478,16 +502,28 @@ class AzFileCopyStrategyTest extends Specification {
                         local target=$2
                         local basedir=$(dirname $2)
                         local ret
+                        local original_error
                         mkdir -p "$basedir"
                     
-                        ret=$(azcopy cp "$source?$AZ_SAS" "$target" 2>&1) || {
-                            ## if fails check if it was trying to download a directory
-                            mkdir -p $target
-                            azcopy cp "$source/*?$AZ_SAS" "$target" --recursive >/dev/null || {
-                                rm -rf $target
+                        # First attempt: try to download as a file
+                        original_error=$(azcopy cp "$source?$AZ_SAS" "$target" 2>&1) || {
+                            # Check if the error suggests this might be a directory
+                            # azcopy typically returns specific error messages for directory-related issues
+                            if [[ "$original_error" == *"please consider using recursive option"* || "$original_error" == *"is a directory"* || "$original_error" == *"source is a folder"* || "$original_error" == *"resource is a directory"* ]]; then
+                                # Only create directory if error suggests source is a directory
+                                mkdir -p "$target"
+                                azcopy cp "$source/*?$AZ_SAS" "$target" --recursive >/dev/null || {
+                                    rm -rf "$target"
+                                    >&2 echo "Unable to download path: $source"
+                                    >&2 echo "Original error: $original_error"
+                                    exit 1
+                                }
+                            else
+                                # For other errors (memory, network, permissions, etc.), don't create directory
                                 >&2 echo "Unable to download path: $source"
+                                >&2 echo "Error: $original_error"
                                 exit 1
-                            }
+                            fi
                         }
                     }
 
