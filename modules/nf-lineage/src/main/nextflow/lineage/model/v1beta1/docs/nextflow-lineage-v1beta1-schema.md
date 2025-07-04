@@ -4,7 +4,7 @@
 https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json
 ```
 
-JSON Schema for Nextflow lineage data model version v1beta1
+JSON Schema for Nextflow lineage data model version v1beta1. This schema validates data lineage information produced by Nextflow workflows including checksums, file paths, task runs, workflow runs, and their relationships.
 
 | Abstract            | Extensible | Status         | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                 |
 | :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------- |
@@ -31,7 +31,7 @@ JSON Schema for Nextflow lineage data model version v1beta1
 
 ## version
 
-Lineage model version
+Lineage model version identifier - must be 'lineage/v1beta1'
 
 `version`
 
@@ -55,15 +55,21 @@ Lineage model version
 "lineage/v1beta1"
 ```
 
+### version Examples
+
+```json
+"lineage/v1beta1"
+```
+
 ## checksums
 
-Collection of checksums
+Collection of file checksums for validation and integrity checking
 
 `checksums`
 
 * is optional
 
-* Type: `object[]` ([Checksum](nextflow-lineage-v1beta1-schema-definitions-checksum.md))
+* Type: `object[]` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
 
 * cannot be null
 
@@ -71,17 +77,29 @@ Collection of checksums
 
 ### checksums Type
 
-`object[]` ([Checksum](nextflow-lineage-v1beta1-schema-definitions-checksum.md))
+`object[]` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
+
+### checksums Examples
+
+```json
+[
+  {
+    "value": "a1b2c3d4e5f6",
+    "algorithm": "nextflow",
+    "mode": "standard"
+  }
+]
+```
 
 ## dataPaths
 
-Collection of data paths
+Collection of data file paths with their associated checksums
 
 `dataPaths`
 
 * is optional
 
-* Type: `object[]` ([DataPath](nextflow-lineage-v1beta1-schema-definitions-datapath.md))
+* Type: `object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
 
 * cannot be null
 
@@ -89,7 +107,22 @@ Collection of data paths
 
 ### dataPaths Type
 
-`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-definitions-datapath.md))
+`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
+
+### dataPaths Examples
+
+```json
+[
+  {
+    "path": "file:///path/to/input.txt",
+    "checksum": {
+      "value": "abc123",
+      "algorithm": "nextflow",
+      "mode": "standard"
+    }
+  }
+]
+```
 
 ## parameters
 
@@ -99,7 +132,7 @@ Collection of parameters
 
 * is optional
 
-* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
 
 * cannot be null
 
@@ -107,7 +140,7 @@ Collection of parameters
 
 ### parameters Type
 
-`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
 
 ## fileOutputs
 
@@ -117,7 +150,7 @@ Collection of file outputs
 
 * is optional
 
-* Type: `object[]` ([FileOutput](nextflow-lineage-v1beta1-schema-definitions-fileoutput.md))
+* Type: `object[]` ([FileOutput](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput.md))
 
 * cannot be null
 
@@ -125,7 +158,7 @@ Collection of file outputs
 
 ### fileOutputs Type
 
-`object[]` ([FileOutput](nextflow-lineage-v1beta1-schema-definitions-fileoutput.md))
+`object[]` ([FileOutput](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput.md))
 
 ## taskOutputs
 
@@ -135,7 +168,7 @@ Collection of task outputs
 
 * is optional
 
-* Type: `object[]` ([TaskOutput](nextflow-lineage-v1beta1-schema-definitions-taskoutput.md))
+* Type: `object[]` ([TaskOutput](nextflow-lineage-v1beta1-schema-1-definitions-taskoutput.md))
 
 * cannot be null
 
@@ -143,7 +176,7 @@ Collection of task outputs
 
 ### taskOutputs Type
 
-`object[]` ([TaskOutput](nextflow-lineage-v1beta1-schema-definitions-taskoutput.md))
+`object[]` ([TaskOutput](nextflow-lineage-v1beta1-schema-1-definitions-taskoutput.md))
 
 ## taskRuns
 
@@ -153,7 +186,7 @@ Collection of task runs
 
 * is optional
 
-* Type: `object[]` ([TaskRun](nextflow-lineage-v1beta1-schema-definitions-taskrun.md))
+* Type: `object[]` ([TaskRun](nextflow-lineage-v1beta1-schema-1-definitions-taskrun.md))
 
 * cannot be null
 
@@ -161,7 +194,7 @@ Collection of task runs
 
 ### taskRuns Type
 
-`object[]` ([TaskRun](nextflow-lineage-v1beta1-schema-definitions-taskrun.md))
+`object[]` ([TaskRun](nextflow-lineage-v1beta1-schema-1-definitions-taskrun.md))
 
 ## workflows
 
@@ -171,7 +204,7 @@ Collection of workflows
 
 * is optional
 
-* Type: `object[]` ([Workflow](nextflow-lineage-v1beta1-schema-definitions-workflow.md))
+* Type: `object[]` ([Workflow](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md))
 
 * cannot be null
 
@@ -179,7 +212,7 @@ Collection of workflows
 
 ### workflows Type
 
-`object[]` ([Workflow](nextflow-lineage-v1beta1-schema-definitions-workflow.md))
+`object[]` ([Workflow](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md))
 
 ## workflowOutputs
 
@@ -189,7 +222,7 @@ Collection of workflow outputs
 
 * is optional
 
-* Type: `object[]` ([WorkflowOutput](nextflow-lineage-v1beta1-schema-definitions-workflowoutput.md))
+* Type: `object[]` ([WorkflowOutput](nextflow-lineage-v1beta1-schema-1-definitions-workflowoutput.md))
 
 * cannot be null
 
@@ -197,17 +230,17 @@ Collection of workflow outputs
 
 ### workflowOutputs Type
 
-`object[]` ([WorkflowOutput](nextflow-lineage-v1beta1-schema-definitions-workflowoutput.md))
+`object[]` ([WorkflowOutput](nextflow-lineage-v1beta1-schema-1-definitions-workflowoutput.md))
 
 ## workflowRuns
 
-Collection of workflow runs
+Collection of workflow execution instances with their parameters and configurations
 
 `workflowRuns`
 
 * is optional
 
-* Type: `object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-definitions-workflowrun.md))
+* Type: `object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md))
 
 * cannot be null
 
@@ -215,7 +248,32 @@ Collection of workflow runs
 
 ### workflowRuns Type
 
-`object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-definitions-workflowrun.md))
+`object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md))
+
+### workflowRuns Examples
+
+```json
+[
+  {
+    "workflow": {
+      "scriptFiles": [
+        {
+          "path": "file:///path/to/main.nf",
+          "checksum": {
+            "value": "abc123",
+            "algorithm": "nextflow",
+            "mode": "standard"
+          }
+        }
+      ]
+    },
+    "sessionId": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "workflow_run_1",
+    "params": [],
+    "config": {}
+  }
+]
+```
 
 # Nextflow Lineage Data Model v1beta1 Definitions
 
@@ -235,7 +293,7 @@ Reference this group by using
 
 ### value
 
-The checksum value
+The checksum value as a hexadecimal string
 
 `value`
 
@@ -251,9 +309,31 @@ The checksum value
 
 `string`
 
+#### value Constraints
+
+**minimum length**: the minimum number of characters for this string is: `1`
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^[a-fA-F0-9]+$
+```
+
+[try pattern](https://regexr.com/?expression=%5E%5Ba-fA-F0-9%5D%2B%24 "try regular expression with regexr.com")
+
+#### value Examples
+
+```json
+"a1b2c3d4e5f6"
+```
+
+```json
+"1234567890abcdef"
+```
+
 ### algorithm
 
-The algorithm used to compute the checksum
+The algorithm used to compute the checksum. Currently only 'nextflow' is supported.
 
 `algorithm`
 
@@ -269,9 +349,17 @@ The algorithm used to compute the checksum
 
 `string`
 
+#### algorithm Constraints
+
+**enum**: the value of this property must be equal to one of the following values:
+
+| Value        | Explanation |
+| :----------- | :---------- |
+| `"nextflow"` |             |
+
 ### mode
 
-The mode used to compute the checksum
+The hashing mode used to compute the checksum
 
 `mode`
 
@@ -287,6 +375,35 @@ The mode used to compute the checksum
 
 `string`
 
+#### mode Constraints
+
+**enum**: the value of this property must be equal to one of the following values:
+
+| Value        | Explanation |
+| :----------- | :---------- |
+| `"standard"` |             |
+| `"deep"`     |             |
+| `"lenient"`  |             |
+| `"sha256"`   |             |
+
+#### mode Examples
+
+```json
+"standard"
+```
+
+```json
+"deep"
+```
+
+```json
+"lenient"
+```
+
+```json
+"sha256"
+```
+
 ## Definitions group DataPath
 
 Reference this group by using
@@ -298,11 +415,11 @@ Reference this group by using
 | Property              | Type     | Required | Nullable       | Defined by                                                                                                                                                                                                             |
 | :-------------------- | :------- | :------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [path](#path)         | `string` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-datapath-properties-path.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/DataPath/properties/path") |
-| [checksum](#checksum) | `object` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/DataPath/properties/checksum")             |
+| [checksum](#checksum) | `object` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/DataPath/properties/checksum")           |
 
 ### path
 
-Real path of the output data
+Real path of the data as a URI (file://, s3://, etc.)
 
 `path`
 
@@ -318,6 +435,20 @@ Real path of the output data
 
 `string`
 
+#### path Constraints
+
+**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc3986 "check the specification")
+
+#### path Examples
+
+```json
+"file:///path/to/script.nf"
+```
+
+```json
+"file:///path/to/input.txt"
+```
+
 ### checksum
 
 Models a checksum including the value as well as the algorithm and mode used to compute it
@@ -326,15 +457,15 @@ Models a checksum including the value as well as the algorithm and mode used to 
 
 * is required
 
-* Type: `object` ([Checksum](nextflow-lineage-v1beta1-schema-definitions-checksum.md))
+* Type: `object` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
 
 * cannot be null
 
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/DataPath/properties/checksum")
+* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/DataPath/properties/checksum")
 
 #### checksum Type
 
-`object` ([Checksum](nextflow-lineage-v1beta1-schema-definitions-checksum.md))
+`object` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
 
 ## Definitions group Parameter
 
@@ -352,7 +483,7 @@ Reference this group by using
 
 ### type
 
-The parameter type
+The parameter type - one of the supported Nextflow parameter types
 
 `type`
 
@@ -368,9 +499,49 @@ The parameter type
 
 `string`
 
+#### type Constraints
+
+**enum**: the value of this property must be equal to one of the following values:
+
+| Value          | Explanation |
+| :------------- | :---------- |
+| `"stdout"`     |             |
+| `"stdin"`      |             |
+| `"path"`       |             |
+| `"val"`        |             |
+| `"env"`        |             |
+| `"eval"`       |             |
+| `"each"`       |             |
+| `"Path"`       |             |
+| `"String"`     |             |
+| `"Collection"` |             |
+| `"Map"`        |             |
+
+#### type Examples
+
+```json
+"path"
+```
+
+```json
+"val"
+```
+
+```json
+"env"
+```
+
+```json
+"String"
+```
+
+```json
+"Collection"
+```
+
 ### name
 
-The parameter name
+The parameter name - must be a valid identifier
 
 `name`
 
@@ -386,9 +557,39 @@ The parameter name
 
 `string`
 
+#### name Constraints
+
+**minimum length**: the minimum number of characters for this string is: `1`
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^[a-zA-Z_][a-zA-Z0-9_]*$
+```
+
+[try pattern](https://regexr.com/?expression=%5E%5Ba-zA-Z_%5D%5Ba-zA-Z0-9_%5D*%24 "try regular expression with regexr.com")
+
+#### name Examples
+
+```json
+"input_file"
+```
+
+```json
+"output_dir"
+```
+
+```json
+"threads"
+```
+
+```json
+"sample_id"
+```
+
 ### value
 
-The parameter value - can be any type
+The parameter value - can be any type depending on the parameter type. For 'path' types, may contain file paths or lid:// URIs. For 'val' types, contains primitive values.
 
 `value`
 
@@ -404,6 +605,31 @@ The parameter value - can be any type
 
 unknown ([Parameter Value](nextflow-lineage-v1beta1-schema-definitions-parameter-properties-parameter-value.md))
 
+#### value Examples
+
+```json
+"file:///path/to/input.txt"
+```
+
+```json
+"lid://abc123/output.txt"
+```
+
+```json
+42
+```
+
+```json
+"sample_name"
+```
+
+```json
+[
+  "item1",
+  "item2"
+]
+```
+
 ## Definitions group FileOutput
 
 Reference this group by using
@@ -415,10 +641,10 @@ Reference this group by using
 | Property                    | Type      | Required | Nullable       | Defined by                                                                                                                                                                                                                               |
 | :-------------------------- | :-------- | :------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [path](#path-1)             | `string`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-fileoutput-properties-path.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/path")               |
-| [checksum](#checksum-1)     | `object`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/checksum")                             |
+| [checksum](#checksum-1)     | `object`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/checksum")                           |
 | [source](#source)           | `string`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-fileoutput-properties-source.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/source")           |
 | [workflowRun](#workflowrun) | `string`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-fileoutput-properties-workflowrun.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/workflowRun") |
-| [taskRun](#taskrun)         | `string`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-fileoutput-properties-taskrun.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/taskRun")         |
+| [taskRun](#taskrun)         | `string`  | Optional | can be null    | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-fileoutput-properties-taskrun.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/taskRun")         |
 | [size](#size)               | `integer` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-fileoutput-properties-size.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/size")               |
 | [createdAt](#createdat)     | `string`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-fileoutput-properties-createdat.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/createdAt")     |
 | [modifiedAt](#modifiedat)   | `string`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-fileoutput-properties-modifiedat.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/modifiedAt")   |
@@ -426,7 +652,7 @@ Reference this group by using
 
 ### path
 
-Real path of the output data
+Real path of the output data as a URI (file://, s3://, etc.)
 
 `path`
 
@@ -442,6 +668,20 @@ Real path of the output data
 
 `string`
 
+#### path Constraints
+
+**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc3986 "check the specification")
+
+#### path Examples
+
+```json
+"file:///path/to/output.txt"
+```
+
+```json
+"s3://bucket/output.txt"
+```
+
 ### checksum
 
 Models a checksum including the value as well as the algorithm and mode used to compute it
@@ -450,19 +690,19 @@ Models a checksum including the value as well as the algorithm and mode used to 
 
 * is required
 
-* Type: `object` ([Checksum](nextflow-lineage-v1beta1-schema-definitions-checksum.md))
+* Type: `object` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
 
 * cannot be null
 
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/checksum")
+* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/checksum")
 
 #### checksum Type
 
-`object` ([Checksum](nextflow-lineage-v1beta1-schema-definitions-checksum.md))
+`object` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
 
 ### source
 
-Entity that generated the data (FileOutput, TaskRun, or WorkflowRun)
+Entity that generated the data - lid:// URI referencing FileOutput, TaskRun, or WorkflowRun
 
 `source`
 
@@ -478,9 +718,29 @@ Entity that generated the data (FileOutput, TaskRun, or WorkflowRun)
 
 `string`
 
+#### source Constraints
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^lid://[a-fA-F0-9]+(/.*)?$
+```
+
+[try pattern](https://regexr.com/?expression=%5Elid%3A%2F%2F%5Ba-fA-F0-9%5D%2B\(%2F.*\)%3F%24 "try regular expression with regexr.com")
+
+#### source Examples
+
+```json
+"lid://1234567890abcdef"
+```
+
+```json
+"lid://abc123/output.txt"
+```
+
 ### workflowRun
 
-Reference to the WorkflowRun that generated the data
+Reference to the WorkflowRun that generated the data - lid:// URI
 
 `workflowRun`
 
@@ -496,9 +756,25 @@ Reference to the WorkflowRun that generated the data
 
 `string`
 
+#### workflowRun Constraints
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^lid://[a-fA-F0-9]+$
+```
+
+[try pattern](https://regexr.com/?expression=%5Elid%3A%2F%2F%5Ba-fA-F0-9%5D%2B%24 "try regular expression with regexr.com")
+
+#### workflowRun Examples
+
+```json
+"lid://1234567890abcdef"
+```
+
 ### taskRun
 
-Reference to the task that generated the data
+Reference to the task that generated the data - lid:// URI (null for workflow-level outputs)
 
 `taskRun`
 
@@ -506,13 +782,33 @@ Reference to the task that generated the data
 
 * Type: `string`
 
-* cannot be null
+* can be null
 
 * defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-fileoutput-properties-taskrun.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/taskRun")
 
 #### taskRun Type
 
 `string`
+
+#### taskRun Constraints
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^lid://[a-fA-F0-9]+$
+```
+
+[try pattern](https://regexr.com/?expression=%5Elid%3A%2F%2F%5Ba-fA-F0-9%5D%2B%24 "try regular expression with regexr.com")
+
+#### taskRun Examples
+
+```json
+"lid://abc123def456"
+```
+
+```json
+null
+```
 
 ### size
 
@@ -680,7 +976,7 @@ Output of the task
 
 * is required
 
-* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
 
 * cannot be null
 
@@ -688,7 +984,7 @@ Output of the task
 
 #### output Type
 
-`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
 
 ### labels
 
@@ -720,7 +1016,7 @@ Reference this group by using
 | :---------------------------- | :------- | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [sessionId](#sessionid)       | `string` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-taskrun-properties-sessionid.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/sessionId")         |
 | [name](#name-1)               | `string` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-taskrun-properties-name.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/name")                   |
-| [codeChecksum](#codechecksum) | `object` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/codeChecksum")                          |
+| [codeChecksum](#codechecksum) | `object` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/codeChecksum")                        |
 | [script](#script)             | `string` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-taskrun-properties-script.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/script")               |
 | [input](#input)               | `array`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-taskrun-properties-task-input-parameters.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/input") |
 | [container](#container)       | `string` | Optional | can be null    | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-taskrun-properties-container.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/container")         |
@@ -733,7 +1029,7 @@ Reference this group by using
 
 ### sessionId
 
-Execution session identifier
+Execution session identifier - UUID format
 
 `sessionId`
 
@@ -749,9 +1045,25 @@ Execution session identifier
 
 `string`
 
+#### sessionId Constraints
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+```
+
+[try pattern](https://regexr.com/?expression=%5E%5B0-9a-fA-F%5D%7B8%7D-%5B0-9a-fA-F%5D%7B4%7D-%5B0-9a-fA-F%5D%7B4%7D-%5B0-9a-fA-F%5D%7B4%7D-%5B0-9a-fA-F%5D%7B12%7D%24 "try regular expression with regexr.com")
+
+#### sessionId Examples
+
+```json
+"550e8400-e29b-41d4-a716-446655440000"
+```
+
 ### name
 
-Task name
+Task name as defined in the workflow
 
 `name`
 
@@ -767,6 +1079,24 @@ Task name
 
 `string`
 
+#### name Constraints
+
+**minimum length**: the minimum number of characters for this string is: `1`
+
+#### name Examples
+
+```json
+"FASTQC"
+```
+
+```json
+"BWA_MEM"
+```
+
+```json
+"SAMTOOLS_SORT"
+```
+
 ### codeChecksum
 
 Models a checksum including the value as well as the algorithm and mode used to compute it
@@ -775,15 +1105,15 @@ Models a checksum including the value as well as the algorithm and mode used to 
 
 * is required
 
-* Type: `object` ([Checksum](nextflow-lineage-v1beta1-schema-definitions-checksum.md))
+* Type: `object` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
 
 * cannot be null
 
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/codeChecksum")
+* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/codeChecksum")
 
 #### codeChecksum Type
 
-`object` ([Checksum](nextflow-lineage-v1beta1-schema-definitions-checksum.md))
+`object` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
 
 ### script
 
@@ -811,7 +1141,7 @@ Task run input
 
 * is required
 
-* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
 
 * cannot be null
 
@@ -819,7 +1149,7 @@ Task run input
 
 #### input Type
 
-`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
 
 ### container
 
@@ -919,7 +1249,7 @@ Binaries used in the task run
 
 * is optional
 
-* Type: `object[]` ([DataPath](nextflow-lineage-v1beta1-schema-definitions-datapath.md))
+* Type: `object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
 
 * cannot be null
 
@@ -927,7 +1257,7 @@ Binaries used in the task run
 
 #### binEntries Type
 
-`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-definitions-datapath.md))
+`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
 
 ### workflowRun
 
@@ -955,33 +1285,52 @@ Reference this group by using
 {"$ref":"https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow"}
 ```
 
-| Property                    | Type     | Required | Nullable       | Defined by                                                                                                                                                                                                                          |
-| :-------------------------- | :------- | :------- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [scriptFiles](#scriptfiles) | `array`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow-properties-data-paths.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/scriptFiles") |
-| [repository](#repository)   | `string` | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow-properties-repository.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/repository")  |
-| [commitId](#commitid)       | `string` | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow-properties-commitid.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/commitId")      |
+| Property                    | Type     | Required | Nullable       | Defined by                                                                                                                                                                                                                            |
+| :-------------------------- | :------- | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [scriptFiles](#scriptfiles) | `array`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow-properties-script-files.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/scriptFiles") |
+| [repository](#repository)   | `string` | Optional | can be null    | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow-properties-repository.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/repository")    |
+| [commitId](#commitid)       | `string` | Optional | can be null    | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow-properties-commitid.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/commitId")        |
 
 ### scriptFiles
 
-List of script files defining a workflow
+List of script files defining a workflow (main script and modules)
 
 `scriptFiles`
 
 * is required
 
-* Type: `object[]` ([DataPath](nextflow-lineage-v1beta1-schema-definitions-datapath.md))
+* Type: `object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
 
 * cannot be null
 
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow-properties-data-paths.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/scriptFiles")
+* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow-properties-script-files.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/scriptFiles")
 
 #### scriptFiles Type
 
-`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-definitions-datapath.md))
+`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
+
+#### scriptFiles Constraints
+
+**minimum number of items**: the minimum number of items for this array is: `1`
+
+#### scriptFiles Examples
+
+```json
+[
+  {
+    "path": "file:///path/to/main.nf",
+    "checksum": {
+      "value": "abc123",
+      "algorithm": "nextflow",
+      "mode": "standard"
+    }
+  }
+]
+```
 
 ### repository
 
-Workflow repository
+Workflow repository URL (git, github, etc.) or null if local
 
 `repository`
 
@@ -989,7 +1338,7 @@ Workflow repository
 
 * Type: `string`
 
-* cannot be null
+* can be null
 
 * defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow-properties-repository.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/repository")
 
@@ -997,9 +1346,23 @@ Workflow repository
 
 `string`
 
+#### repository Constraints
+
+**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc3986 "check the specification")
+
+#### repository Examples
+
+```json
+"https://github.com/user/workflow.git"
+```
+
+```json
+null
+```
+
 ### commitId
 
-Workflow commit identifier
+Git commit identifier (SHA) or null if not from a repository
 
 `commitId`
 
@@ -1007,13 +1370,37 @@ Workflow commit identifier
 
 * Type: `string`
 
-* cannot be null
+* can be null
 
 * defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow-properties-commitid.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/commitId")
 
 #### commitId Type
 
 `string`
+
+#### commitId Constraints
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^[a-fA-F0-9]{6,40}$
+```
+
+[try pattern](https://regexr.com/?expression=%5E%5Ba-fA-F0-9%5D%7B6%2C40%7D%24 "try regular expression with regexr.com")
+
+#### commitId Examples
+
+```json
+"a1b2c3d4e5f6789"
+```
+
+```json
+"1234567890abcdef1234567890abcdef12345678"
+```
+
+```json
+null
+```
 
 ## Definitions group WorkflowOutput
 
@@ -1077,7 +1464,7 @@ Workflow output
 
 * is required
 
-* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
 
 * cannot be null
 
@@ -1085,7 +1472,7 @@ Workflow output
 
 #### output Type
 
-`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
 
 ## Definitions group WorkflowRun
 
@@ -1097,7 +1484,7 @@ Reference this group by using
 
 | Property                  | Type     | Required | Nullable       | Defined by                                                                                                                                                                                                                                    |
 | :------------------------ | :------- | :------- | :------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [workflow](#workflow)     | `object` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/workflow")                                 |
+| [workflow](#workflow)     | `object` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/workflow")                               |
 | [sessionId](#sessionid-1) | `string` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflowrun-properties-sessionid.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/sessionId")        |
 | [name](#name-2)           | `string` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflowrun-properties-name.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/name")                  |
 | [params](#params)         | `array`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflowrun-properties-workflow-parameters.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/params") |
@@ -1111,19 +1498,19 @@ Models a workflow definition
 
 * is required
 
-* Type: `object` ([Workflow](nextflow-lineage-v1beta1-schema-definitions-workflow.md))
+* Type: `object` ([Workflow](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md))
 
 * cannot be null
 
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/workflow")
+* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/workflow")
 
 #### workflow Type
 
-`object` ([Workflow](nextflow-lineage-v1beta1-schema-definitions-workflow.md))
+`object` ([Workflow](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md))
 
 ### sessionId
 
-Session identifier used in the workflow run
+Execution session identifier - UUID format
 
 `sessionId`
 
@@ -1139,9 +1526,25 @@ Session identifier used in the workflow run
 
 `string`
 
+#### sessionId Constraints
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+```
+
+[try pattern](https://regexr.com/?expression=%5E%5B0-9a-fA-F%5D%7B8%7D-%5B0-9a-fA-F%5D%7B4%7D-%5B0-9a-fA-F%5D%7B4%7D-%5B0-9a-fA-F%5D%7B4%7D-%5B0-9a-fA-F%5D%7B12%7D%24 "try regular expression with regexr.com")
+
+#### sessionId Examples
+
+```json
+"550e8400-e29b-41d4-a716-446655440000"
+```
+
 ### name
 
-Workflow run name
+Workflow run name - often auto-generated or user-provided
 
 `name`
 
@@ -1157,6 +1560,24 @@ Workflow run name
 
 `string`
 
+#### name Constraints
+
+**minimum length**: the minimum number of characters for this string is: `1`
+
+#### name Examples
+
+```json
+"silly_darwin"
+```
+
+```json
+"user_analysis_run"
+```
+
+```json
+"my-workflow-2024"
+```
+
 ### params
 
 Workflow parameters
@@ -1165,7 +1586,7 @@ Workflow parameters
 
 * is required
 
-* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
 
 * cannot be null
 
@@ -1173,7 +1594,7 @@ Workflow parameters
 
 #### params Type
 
-`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
 
 ### config
 

@@ -12,4 +12,4 @@ Output of the task
 
 ## output Type
 
-`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
+`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))

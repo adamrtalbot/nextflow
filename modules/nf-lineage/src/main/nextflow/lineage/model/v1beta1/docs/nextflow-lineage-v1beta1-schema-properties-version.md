@@ -4,7 +4,7 @@
 https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/version
 ```
 
-Lineage model version
+Lineage model version identifier - must be 'lineage/v1beta1'
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                   |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
@@ -17,6 +17,12 @@ Lineage model version
 ## version Constraints
 
 **constant**: the value of this property must be equal to:
+
+```json
+"lineage/v1beta1"
+```
+
+## version Examples
 
 ```json
 "lineage/v1beta1"

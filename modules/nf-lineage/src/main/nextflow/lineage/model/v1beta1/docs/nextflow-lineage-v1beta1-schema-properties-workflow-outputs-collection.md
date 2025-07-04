@@ -12,4 +12,4 @@ Collection of workflow outputs
 
 ## workflowOutputs Type
 
-`object[]` ([WorkflowOutput](nextflow-lineage-v1beta1-schema-definitions-workflowoutput.md))
+`object[]` ([WorkflowOutput](nextflow-lineage-v1beta1-schema-1-definitions-workflowoutput.md))

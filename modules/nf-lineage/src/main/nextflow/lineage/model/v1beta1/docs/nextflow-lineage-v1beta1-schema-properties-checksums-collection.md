@@ -4,7 +4,7 @@
 https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/checksums
 ```
 
-Collection of checksums
+Collection of file checksums for validation and integrity checking
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                   |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
@@ -12,4 +12,16 @@ Collection of checksums
 
 ## checksums Type
 
-`object[]` ([Checksum](nextflow-lineage-v1beta1-schema-definitions-checksum.md))
+`object[]` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
+
+## checksums Examples
+
+```json
+[
+  {
+    "value": "a1b2c3d4e5f6",
+    "algorithm": "nextflow",
+    "mode": "standard"
+  }
+]
+```

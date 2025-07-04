@@ -12,4 +12,4 @@ Collection of workflows
 
 ## workflows Type
 
-`object[]` ([Workflow](nextflow-lineage-v1beta1-schema-definitions-workflow.md))
+`object[]` ([Workflow](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md))

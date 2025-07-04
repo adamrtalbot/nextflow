@@ -12,4 +12,4 @@ Binaries used in the task run
 
 ## binEntries Type
 
-`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-definitions-datapath.md))
+`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))

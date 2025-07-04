@@ -12,4 +12,4 @@ Collection of task outputs
 
 ## taskOutputs Type
 
-`object[]` ([TaskOutput](nextflow-lineage-v1beta1-schema-definitions-taskoutput.md))
+`object[]` ([TaskOutput](nextflow-lineage-v1beta1-schema-1-definitions-taskoutput.md))

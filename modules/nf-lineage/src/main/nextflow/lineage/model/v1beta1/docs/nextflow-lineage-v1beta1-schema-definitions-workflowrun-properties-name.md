@@ -4,7 +4,7 @@
 https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/name
 ```
 
-Workflow run name
+Workflow run name - often auto-generated or user-provided
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                   |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
@@ -13,3 +13,21 @@ Workflow run name
 ## name Type
 
 `string`
+
+## name Constraints
+
+**minimum length**: the minimum number of characters for this string is: `1`
+
+## name Examples
+
+```json
+"silly_darwin"
+```
+
+```json
+"user_analysis_run"
+```
+
+```json
+"my-workflow-2024"
+```

@@ -12,4 +12,4 @@ Collection of task runs
 
 ## taskRuns Type
 
-`object[]` ([TaskRun](nextflow-lineage-v1beta1-schema-definitions-taskrun.md))
+`object[]` ([TaskRun](nextflow-lineage-v1beta1-schema-1-definitions-taskrun.md))

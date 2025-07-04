@@ -4,7 +4,7 @@
 https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/name
 ```
 
-Task name
+Task name as defined in the workflow
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                   |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
@@ -13,3 +13,21 @@ Task name
 ## name Type
 
 `string`
+
+## name Constraints
+
+**minimum length**: the minimum number of characters for this string is: `1`
+
+## name Examples
+
+```json
+"FASTQC"
+```
+
+```json
+"BWA_MEM"
+```
+
+```json
+"SAMTOOLS_SORT"
+```

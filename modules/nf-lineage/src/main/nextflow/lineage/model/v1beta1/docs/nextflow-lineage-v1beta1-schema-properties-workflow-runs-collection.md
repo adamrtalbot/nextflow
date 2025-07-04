@@ -4,7 +4,7 @@
 https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/workflowRuns
 ```
 
-Collection of workflow runs
+Collection of workflow execution instances with their parameters and configurations
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                   |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
@@ -12,4 +12,29 @@ Collection of workflow runs
 
 ## workflowRuns Type
 
-`object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-definitions-workflowrun.md))
+`object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md))
+
+## workflowRuns Examples
+
+```json
+[
+  {
+    "workflow": {
+      "scriptFiles": [
+        {
+          "path": "file:///path/to/main.nf",
+          "checksum": {
+            "value": "abc123",
+            "algorithm": "nextflow",
+            "mode": "standard"
+          }
+        }
+      ]
+    },
+    "sessionId": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "workflow_run_1",
+    "params": [],
+    "config": {}
+  }
+]
+```

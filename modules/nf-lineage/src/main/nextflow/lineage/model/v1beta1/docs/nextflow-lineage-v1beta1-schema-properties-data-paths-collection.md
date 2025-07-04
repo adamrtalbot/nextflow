@@ -4,7 +4,7 @@
 https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/dataPaths
 ```
 
-Collection of data paths
+Collection of data file paths with their associated checksums
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                   |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
@@ -12,4 +12,19 @@ Collection of data paths
 
 ## dataPaths Type
 
-`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-definitions-datapath.md))
+`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
+
+## dataPaths Examples
+
+```json
+[
+  {
+    "path": "file:///path/to/input.txt",
+    "checksum": {
+      "value": "abc123",
+      "algorithm": "nextflow",
+      "mode": "standard"
+    }
+  }
+]
+```

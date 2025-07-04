@@ -12,4 +12,4 @@ Collection of file outputs
 
 ## fileOutputs Type
 
-`object[]` ([FileOutput](nextflow-lineage-v1beta1-schema-definitions-fileoutput.md))
+`object[]` ([FileOutput](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput.md))
