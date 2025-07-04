@@ -1,7 +1,7 @@
 # Parameter Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Parameter
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/params/items
 ```
 
 Model Workflow and Task Parameters including input/output channels and environment variables
@@ -10,11 +10,11 @@ Model Workflow and Task Parameters including input/output channels and environme
 | :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | No           | Forbidden         | Forbidden             | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## Parameter Type
+## items Type
 
 `object` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
 
-# Parameter Properties
+# items Properties
 
 | Property        | Type          | Required | Nullable       | Defined by                                                                                                                                                                                                                           |
 | :-------------- | :------------ | :------- | :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

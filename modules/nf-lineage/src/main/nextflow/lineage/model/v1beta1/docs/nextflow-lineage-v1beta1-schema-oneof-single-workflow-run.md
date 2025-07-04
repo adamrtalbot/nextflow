@@ -16,6 +16,6 @@ merged type ([Single Workflow Run](nextflow-lineage-v1beta1-schema-oneof-single-
 
 all of
 
-* [WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md "check type definition")
+* [WorkflowRun](nextflow-lineage-v1beta1-schema-definitions-workflowrun.md "check type definition")
 
 * [Untitled undefined type in Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-oneof-single-workflow-run-allof-1.md "check type definition")

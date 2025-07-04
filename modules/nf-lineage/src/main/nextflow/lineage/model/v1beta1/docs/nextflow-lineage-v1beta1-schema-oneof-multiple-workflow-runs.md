@@ -61,7 +61,7 @@ Collection of workflow execution instances with their parameters and configurati
 
 * is required
 
-* Type: `object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md))
+* Type: `object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-definitions-workflowrun.md))
 
 * cannot be null
 
@@ -69,7 +69,7 @@ Collection of workflow execution instances with their parameters and configurati
 
 ### workflowRuns Type
 
-`object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md))
+`object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-definitions-workflowrun.md))
 
 ### workflowRuns Constraints
 

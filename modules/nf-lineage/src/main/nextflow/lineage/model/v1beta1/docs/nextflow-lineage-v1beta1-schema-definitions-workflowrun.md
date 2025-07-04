@@ -1,7 +1,7 @@
 # WorkflowRun Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/oneOf/1/properties/workflowRuns/items
 ```
 
 Models a Workflow Execution including the workflow definition, runtime parameters, and configuration
@@ -10,15 +10,15 @@ Models a Workflow Execution including the workflow definition, runtime parameter
 | :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | No           | Forbidden         | Forbidden             | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## WorkflowRun Type
+## items Type
 
 `object` ([WorkflowRun](nextflow-lineage-v1beta1-schema-definitions-workflowrun.md))
 
-# WorkflowRun Properties
+# items Properties
 
 | Property                | Type     | Required | Nullable       | Defined by                                                                                                                                                                                                                                    |
 | :---------------------- | :------- | :------- | :------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [workflow](#workflow)   | `object` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/workflow")                               |
+| [workflow](#workflow)   | `object` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/workflow")                                 |
 | [sessionId](#sessionid) | `string` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflowrun-properties-sessionid.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/sessionId")        |
 | [name](#name)           | `string` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflowrun-properties-name.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/name")                  |
 | [params](#params)       | `array`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflowrun-properties-workflow-parameters.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/params") |
@@ -32,15 +32,15 @@ Models a workflow definition including source code and version control informati
 
 * is required
 
-* Type: `object` ([Workflow](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md))
+* Type: `object` ([Workflow](nextflow-lineage-v1beta1-schema-definitions-workflow.md))
 
 * cannot be null
 
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/workflow")
+* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-definitions-workflow.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/workflow")
 
 ### workflow Type
 
-`object` ([Workflow](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md))
+`object` ([Workflow](nextflow-lineage-v1beta1-schema-definitions-workflow.md))
 
 ## sessionId
 
@@ -120,7 +120,7 @@ Workflow parameters
 
 * is required
 
-* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
+* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
 
 * cannot be null
 
@@ -128,7 +128,7 @@ Workflow parameters
 
 ### params Type
 
-`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
+`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-definitions-parameter.md))
 
 ## config
 

@@ -1,7 +1,7 @@
 # Checksum Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Checksum
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/codeChecksum
 ```
 
 Models a checksum including the value as well as the algorithm and mode used to compute it
@@ -10,11 +10,11 @@ Models a checksum including the value as well as the algorithm and mode used to 
 | :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | No           | Forbidden         | Forbidden             | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## Checksum Type
+## codeChecksum Type
 
 `object` ([Checksum](nextflow-lineage-v1beta1-schema-definitions-checksum.md))
 
-# Checksum Properties
+# codeChecksum Properties
 
 | Property                | Type     | Required | Nullable       | Defined by                                                                                                                                                                                                                       |
 | :---------------------- | :------- | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

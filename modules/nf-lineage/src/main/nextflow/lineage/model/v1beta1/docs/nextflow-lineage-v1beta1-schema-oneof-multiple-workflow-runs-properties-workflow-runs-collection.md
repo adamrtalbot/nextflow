@@ -12,7 +12,7 @@ Collection of workflow execution instances with their parameters and configurati
 
 ## workflowRuns Type
 
-`object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md))
+`object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-definitions-workflowrun.md))
 
 ## workflowRuns Constraints
 

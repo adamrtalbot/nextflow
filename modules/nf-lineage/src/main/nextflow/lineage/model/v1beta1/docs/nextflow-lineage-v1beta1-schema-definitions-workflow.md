@@ -1,7 +1,7 @@
 # Workflow Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowRun/properties/workflow
 ```
 
 Models a workflow definition including source code and version control information
@@ -10,11 +10,11 @@ Models a workflow definition including source code and version control informati
 | :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | No           | Forbidden         | Forbidden             | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## Workflow Type
+## workflow Type
 
 `object` ([Workflow](nextflow-lineage-v1beta1-schema-definitions-workflow.md))
 
-# Workflow Properties
+# workflow Properties
 
 | Property                    | Type     | Required | Nullable       | Defined by                                                                                                                                                                                                                            |
 | :-------------------------- | :------- | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -30,7 +30,7 @@ List of script files defining a workflow (main script and modules)
 
 * is required
 
-* Type: `object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
+* Type: `object[]` ([DataPath](nextflow-lineage-v1beta1-schema-definitions-datapath.md))
 
 * cannot be null
 
@@ -38,7 +38,7 @@ List of script files defining a workflow (main script and modules)
 
 ### scriptFiles Type
 
-`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
+`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-definitions-datapath.md))
 
 ### scriptFiles Constraints
 
