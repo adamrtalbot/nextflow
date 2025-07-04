@@ -1,0 +1,448 @@
+{
+    "$id": "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json",
+    "title": "Nextflow Lineage Data Model v1beta1",
+    "description": "JSON Schema for Nextflow lineage data model version v1beta1",
+    "type": "object",
+    "definitions": {
+        "Checksum": {
+            "type": "object",
+            "title": "Checksum",
+            "description": "Models a checksum including the value as well as the algorithm and mode used to compute it",
+            "properties": {
+                "value": {
+                    "type": "string",
+                    "description": "The checksum value"
+                },
+                "algorithm": {
+                    "type": "string",
+                    "description": "The algorithm used to compute the checksum"
+                },
+                "mode": {
+                    "type": "string",
+                    "description": "The mode used to compute the checksum"
+                }
+            },
+            "required": [
+                "value",
+                "algorithm",
+                "mode"
+            ],
+            "additionalProperties": false
+        },
+        "DataPath": {
+            "type": "object",
+            "title": "DataPath",
+            "description": "Models a data path which includes the path and a checksum to validate the content of the path",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Real path of the output data"
+                },
+                "checksum": {
+                    "$ref": "#/definitions/Checksum",
+                    "description": "Checksum of the output data"
+                }
+            },
+            "required": [
+                "path",
+                "checksum"
+            ],
+            "additionalProperties": false
+        },
+        "Parameter": {
+            "type": "object",
+            "title": "Parameter",
+            "description": "Model Workflow and Task Parameters",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The parameter type"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The parameter name"
+                },
+                "value": {
+                    "title": "Parameter Value",
+                    "description": "The parameter value - can be any type"
+                }
+            },
+            "required": [
+                "type",
+                "name",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "FileOutput": {
+            "type": "object",
+            "title": "FileOutput",
+            "description": "Model a base class for workflow and task outputs",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Real path of the output data"
+                },
+                "checksum": {
+                    "$ref": "#/definitions/Checksum",
+                    "description": "Checksum of the output data"
+                },
+                "source": {
+                    "type": "string",
+                    "description": "Entity that generated the data (FileOutput, TaskRun, or WorkflowRun)"
+                },
+                "workflowRun": {
+                    "type": "string",
+                    "description": "Reference to the WorkflowRun that generated the data"
+                },
+                "taskRun": {
+                    "type": "string",
+                    "description": "Reference to the task that generated the data"
+                },
+                "size": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Size of the data"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Data creation date (ISO 8601 format)"
+                },
+                "modifiedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Data last modified date (ISO 8601 format)"
+                },
+                "labels": {
+                    "type": "array",
+                    "title": "Labels",
+                    "items": {
+                        "type": "string",
+                        "title": "Label"
+                    },
+                    "description": "Labels attached to the data"
+                }
+            },
+            "required": [
+                "path",
+                "checksum",
+                "source",
+                "workflowRun",
+                "size",
+                "createdAt",
+                "modifiedAt"
+            ],
+            "additionalProperties": false
+        },
+        "TaskOutput": {
+            "type": "object",
+            "title": "TaskOutput",
+            "description": "Models task results",
+            "properties": {
+                "taskRun": {
+                    "type": "string",
+                    "description": "Reference to the task that generated the output"
+                },
+                "workflowRun": {
+                    "type": "string",
+                    "description": "Reference to the WorkflowRun that generated the output"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Creation date of this task output description (ISO 8601 format)"
+                },
+                "output": {
+                    "type": "array",
+                    "title": "Task Output Parameters",
+                    "items": {
+                        "$ref": "#/definitions/Parameter"
+                    },
+                    "description": "Output of the task"
+                },
+                "labels": {
+                    "type": "array",
+                    "title": "Task Output Labels",
+                    "items": {
+                        "type": "string",
+                        "title": "Label"
+                    },
+                    "description": "Labels attached to the task output"
+                }
+            },
+            "required": [
+                "taskRun",
+                "workflowRun",
+                "createdAt",
+                "output"
+            ],
+            "additionalProperties": false
+        },
+        "TaskRun": {
+            "type": "object",
+            "title": "TaskRun",
+            "description": "Models a task execution",
+            "properties": {
+                "sessionId": {
+                    "type": "string",
+                    "description": "Execution session identifier"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Task name"
+                },
+                "codeChecksum": {
+                    "$ref": "#/definitions/Checksum",
+                    "description": "Checksum of the task source code"
+                },
+                "script": {
+                    "type": "string",
+                    "description": "Resolved task script"
+                },
+                "input": {
+                    "type": "array",
+                    "title": "Task Input Parameters",
+                    "items": {
+                        "$ref": "#/definitions/Parameter"
+                    },
+                    "description": "Task run input"
+                },
+                "container": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Container used for the task run"
+                },
+                "conda": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Conda environment used for the task run"
+                },
+                "spack": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Spack environment used for the task run"
+                },
+                "architecture": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Architecture defined in the Spack environment used for the task run"
+                },
+                "globalVars": {
+                    "type": "object",
+                    "title": "Global Variables",
+                    "description": "Global variables defined in the task run"
+                },
+                "binEntries": {
+                    "type": "array",
+                    "title": "Binary Entries",
+                    "items": {
+                        "$ref": "#/definitions/DataPath"
+                    },
+                    "description": "Binaries used in the task run"
+                },
+                "workflowRun": {
+                    "type": "string",
+                    "description": "Workflow run associated to the task run"
+                }
+            },
+            "required": [
+                "sessionId",
+                "name",
+                "codeChecksum",
+                "script",
+                "input",
+                "workflowRun"
+            ],
+            "additionalProperties": false
+        },
+        "Workflow": {
+            "type": "object",
+            "title": "Workflow",
+            "description": "Models a workflow definition",
+            "properties": {
+                "scriptFiles": {
+                    "type": "array",
+                    "title": "Data Paths",
+                    "items": {
+                        "$ref": "#/definitions/DataPath"
+                    },
+                    "description": "List of script files defining a workflow"
+                },
+                "repository": {
+                    "type": "string",
+                    "description": "Workflow repository"
+                },
+                "commitId": {
+                    "type": "string",
+                    "description": "Workflow commit identifier"
+                }
+            },
+            "required": [
+                "scriptFiles"
+            ],
+            "additionalProperties": false
+        },
+        "WorkflowOutput": {
+            "type": "object",
+            "title": "WorkflowOutput",
+            "description": "Models the results of a workflow execution",
+            "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Creation date of the workflow output (ISO 8601 format)"
+                },
+                "workflowRun": {
+                    "type": "string",
+                    "description": "Workflow run that generated the output"
+                },
+                "output": {
+                    "type": "array",
+                    "title": "Workflow Output Parameters",
+                    "items": {
+                        "$ref": "#/definitions/Parameter"
+                    },
+                    "description": "Workflow output"
+                }
+            },
+            "required": [
+                "createdAt",
+                "workflowRun",
+                "output"
+            ],
+            "additionalProperties": false
+        },
+        "WorkflowRun": {
+            "type": "object",
+            "title": "WorkflowRun",
+            "description": "Models a Workflow Execution",
+            "properties": {
+                "workflow": {
+                    "$ref": "#/definitions/Workflow",
+                    "description": "Description of the workflow associated with the workflow run"
+                },
+                "sessionId": {
+                    "type": "string",
+                    "description": "Session identifier used in the workflow run"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Workflow run name"
+                },
+                "params": {
+                    "type": "array",
+                    "title": "Workflow Parameters",
+                    "items": {
+                        "$ref": "#/definitions/Parameter"
+                    },
+                    "description": "Workflow parameters"
+                },
+                "config": {
+                    "type": "object",
+                    "title": "Configuration",
+                    "description": "Resolved Configuration"
+                }
+            },
+            "required": [
+                "workflow",
+                "sessionId",
+                "name",
+                "params",
+                "config"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "properties": {
+        "version": {
+            "type": "string",
+            "const": "lineage/v1beta1",
+            "description": "Lineage model version"
+        },
+        "checksums": {
+            "type": "array",
+            "title": "Checksums Collection",
+            "items": {
+                "$ref": "#/definitions/Checksum"
+            },
+            "description": "Collection of checksums"
+        },
+        "dataPaths": {
+            "type": "array",
+            "title": "Data Paths Collection",
+            "items": {
+                "$ref": "#/definitions/DataPath"
+            },
+            "description": "Collection of data paths"
+        },
+        "parameters": {
+            "type": "array",
+            "title": "Parameters Collection",
+            "items": {
+                "$ref": "#/definitions/Parameter"
+            },
+            "description": "Collection of parameters"
+        },
+        "fileOutputs": {
+            "type": "array",
+            "title": "File Outputs Collection",
+            "items": {
+                "$ref": "#/definitions/FileOutput"
+            },
+            "description": "Collection of file outputs"
+        },
+        "taskOutputs": {
+            "type": "array",
+            "title": "Task Outputs Collection",
+            "items": {
+                "$ref": "#/definitions/TaskOutput"
+            },
+            "description": "Collection of task outputs"
+        },
+        "taskRuns": {
+            "type": "array",
+            "title": "Task Runs Collection",
+            "items": {
+                "$ref": "#/definitions/TaskRun"
+            },
+            "description": "Collection of task runs"
+        },
+        "workflows": {
+            "type": "array",
+            "title": "Workflows Collection",
+            "items": {
+                "$ref": "#/definitions/Workflow"
+            },
+            "description": "Collection of workflows"
+        },
+        "workflowOutputs": {
+            "type": "array",
+            "title": "Workflow Outputs Collection",
+            "items": {
+                "$ref": "#/definitions/WorkflowOutput"
+            },
+            "description": "Collection of workflow outputs"
+        },
+        "workflowRuns": {
+            "type": "array",
+            "title": "Workflow Runs Collection",
+            "items": {
+                "$ref": "#/definitions/WorkflowRun"
+            },
+            "description": "Collection of workflow runs"
+        }
+    },
+    "required": [
+        "version"
+    ],
+    "additionalProperties": false
+}
