@@ -4,7 +4,7 @@
 https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Checksum/properties/algorithm
 ```
 
-The algorithm used to compute the checksum
+The algorithm used to compute the checksum. Currently only 'nextflow' is supported.
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                       |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------- |
@@ -13,3 +13,11 @@ The algorithm used to compute the checksum
 ## algorithm Type
 
 `string`
+
+## algorithm Constraints
+
+**enum**: the value of this property must be equal to one of the following values:
+
+| Value        | Explanation |
+| :----------- | :---------- |
+| `"nextflow"` |             |

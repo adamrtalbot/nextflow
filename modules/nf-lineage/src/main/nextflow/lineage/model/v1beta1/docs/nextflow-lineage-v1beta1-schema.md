@@ -6,274 +6,23 @@ https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json
 
 JSON Schema for Nextflow lineage data model version v1beta1. This schema validates data lineage information produced by Nextflow workflows including checksums, file paths, task runs, workflow runs, and their relationships.
 
-| Abstract            | Extensible | Status         | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                 |
-| :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------- |
-| Can be instantiated | Yes        | Unknown status | No           | Forbidden         | Forbidden             | none                | [nextflow-lineage-v1beta1-schema.json](../out/nextflow-lineage-v1beta1-schema.json "open original schema") |
+| Abstract               | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                 |
+| :--------------------- | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------- |
+| Cannot be instantiated | Yes        | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [nextflow-lineage-v1beta1-schema.json](../out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
 ## Nextflow Lineage Data Model v1beta1 Type
 
 `object` ([Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema.md))
 
-# Nextflow Lineage Data Model v1beta1 Properties
+one (and only one) of
 
-| Property                            | Type     | Required | Nullable       | Defined by                                                                                                                                                                                                     |
-| :---------------------------------- | :------- | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [version](#version)                 | `string` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-version.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/version")                             |
-| [checksums](#checksums)             | `array`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-checksums-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/checksums")              |
-| [dataPaths](#datapaths)             | `array`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-data-paths-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/dataPaths")             |
-| [parameters](#parameters)           | `array`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-parameters-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/parameters")            |
-| [fileOutputs](#fileoutputs)         | `array`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-file-outputs-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/fileOutputs")         |
-| [taskOutputs](#taskoutputs)         | `array`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-task-outputs-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/taskOutputs")         |
-| [taskRuns](#taskruns)               | `array`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-task-runs-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/taskRuns")               |
-| [workflows](#workflows)             | `array`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-workflows-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/workflows")              |
-| [workflowOutputs](#workflowoutputs) | `array`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-workflow-outputs-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/workflowOutputs") |
-| [workflowRuns](#workflowruns)       | `array`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-workflow-runs-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/workflowRuns")       |
+* all of
 
-## version
+  * [WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md "check type definition")
 
-Lineage model version identifier - must be 'lineage/v1beta1'
+  * [Untitled undefined type in Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-oneof-single-workflow-run-allof-1.md "check type definition")
 
-`version`
-
-* is required
-
-* Type: `string`
-
-* cannot be null
-
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-version.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/version")
-
-### version Type
-
-`string`
-
-### version Constraints
-
-**constant**: the value of this property must be equal to:
-
-```json
-"lineage/v1beta1"
-```
-
-### version Examples
-
-```json
-"lineage/v1beta1"
-```
-
-## checksums
-
-Collection of file checksums for validation and integrity checking
-
-`checksums`
-
-* is optional
-
-* Type: `object[]` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
-
-* cannot be null
-
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-checksums-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/checksums")
-
-### checksums Type
-
-`object[]` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
-
-### checksums Examples
-
-```json
-[
-  {
-    "value": "a1b2c3d4e5f6",
-    "algorithm": "nextflow",
-    "mode": "standard"
-  }
-]
-```
-
-## dataPaths
-
-Collection of data file paths with their associated checksums
-
-`dataPaths`
-
-* is optional
-
-* Type: `object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
-
-* cannot be null
-
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-data-paths-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/dataPaths")
-
-### dataPaths Type
-
-`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
-
-### dataPaths Examples
-
-```json
-[
-  {
-    "path": "file:///path/to/input.txt",
-    "checksum": {
-      "value": "abc123",
-      "algorithm": "nextflow",
-      "mode": "standard"
-    }
-  }
-]
-```
-
-## parameters
-
-Collection of parameters
-
-`parameters`
-
-* is optional
-
-* Type: `object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
-
-* cannot be null
-
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-parameters-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/parameters")
-
-### parameters Type
-
-`object[]` ([Parameter](nextflow-lineage-v1beta1-schema-1-definitions-parameter.md))
-
-## fileOutputs
-
-Collection of file outputs
-
-`fileOutputs`
-
-* is optional
-
-* Type: `object[]` ([FileOutput](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput.md))
-
-* cannot be null
-
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-file-outputs-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/fileOutputs")
-
-### fileOutputs Type
-
-`object[]` ([FileOutput](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput.md))
-
-## taskOutputs
-
-Collection of task outputs
-
-`taskOutputs`
-
-* is optional
-
-* Type: `object[]` ([TaskOutput](nextflow-lineage-v1beta1-schema-1-definitions-taskoutput.md))
-
-* cannot be null
-
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-task-outputs-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/taskOutputs")
-
-### taskOutputs Type
-
-`object[]` ([TaskOutput](nextflow-lineage-v1beta1-schema-1-definitions-taskoutput.md))
-
-## taskRuns
-
-Collection of task runs
-
-`taskRuns`
-
-* is optional
-
-* Type: `object[]` ([TaskRun](nextflow-lineage-v1beta1-schema-1-definitions-taskrun.md))
-
-* cannot be null
-
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-task-runs-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/taskRuns")
-
-### taskRuns Type
-
-`object[]` ([TaskRun](nextflow-lineage-v1beta1-schema-1-definitions-taskrun.md))
-
-## workflows
-
-Collection of workflows
-
-`workflows`
-
-* is optional
-
-* Type: `object[]` ([Workflow](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md))
-
-* cannot be null
-
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-workflows-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/workflows")
-
-### workflows Type
-
-`object[]` ([Workflow](nextflow-lineage-v1beta1-schema-1-definitions-workflow.md))
-
-## workflowOutputs
-
-Collection of workflow outputs
-
-`workflowOutputs`
-
-* is optional
-
-* Type: `object[]` ([WorkflowOutput](nextflow-lineage-v1beta1-schema-1-definitions-workflowoutput.md))
-
-* cannot be null
-
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-workflow-outputs-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/workflowOutputs")
-
-### workflowOutputs Type
-
-`object[]` ([WorkflowOutput](nextflow-lineage-v1beta1-schema-1-definitions-workflowoutput.md))
-
-## workflowRuns
-
-Collection of workflow execution instances with their parameters and configurations
-
-`workflowRuns`
-
-* is optional
-
-* Type: `object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md))
-
-* cannot be null
-
-* defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-properties-workflow-runs-collection.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/workflowRuns")
-
-### workflowRuns Type
-
-`object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md))
-
-### workflowRuns Examples
-
-```json
-[
-  {
-    "workflow": {
-      "scriptFiles": [
-        {
-          "path": "file:///path/to/main.nf",
-          "checksum": {
-            "value": "abc123",
-            "algorithm": "nextflow",
-            "mode": "standard"
-          }
-        }
-      ]
-    },
-    "sessionId": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "workflow_run_1",
-    "params": [],
-    "config": {}
-  }
-]
-```
+* [Multiple Workflow Runs](nextflow-lineage-v1beta1-schema-oneof-multiple-workflow-runs.md "check type definition")
 
 # Nextflow Lineage Data Model v1beta1 Definitions
 
@@ -1492,7 +1241,7 @@ Reference this group by using
 
 ### workflow
 
-Models a workflow definition
+Models a workflow definition including source code and version control information
 
 `workflow`
 

@@ -1,20 +1,20 @@
 # TaskRun Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/taskRuns/items
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun
 ```
 
-Models a task execution
+Models a task execution including code, environment, and execution context
 
 | Abstract            | Extensible | Status         | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                       |
 | :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | No           | Forbidden         | Forbidden             | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## items Type
+## TaskRun Type
 
 `object` ([TaskRun](nextflow-lineage-v1beta1-schema-1-definitions-taskrun.md))
 
-# items Properties
+# TaskRun Properties
 
 | Property                      | Type     | Required | Nullable       | Defined by                                                                                                                                                                                                                               |
 | :---------------------------- | :------- | :------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -33,7 +33,7 @@ Models a task execution
 
 ## sessionId
 
-Execution session identifier
+Execution session identifier - UUID format
 
 `sessionId`
 
@@ -49,9 +49,25 @@ Execution session identifier
 
 `string`
 
+### sessionId Constraints
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+```
+
+[try pattern](https://regexr.com/?expression=%5E%5B0-9a-fA-F%5D%7B8%7D-%5B0-9a-fA-F%5D%7B4%7D-%5B0-9a-fA-F%5D%7B4%7D-%5B0-9a-fA-F%5D%7B4%7D-%5B0-9a-fA-F%5D%7B12%7D%24 "try regular expression with regexr.com")
+
+### sessionId Examples
+
+```json
+"550e8400-e29b-41d4-a716-446655440000"
+```
+
 ## name
 
-Task name
+Task name as defined in the workflow
 
 `name`
 
@@ -66,6 +82,24 @@ Task name
 ### name Type
 
 `string`
+
+### name Constraints
+
+**minimum length**: the minimum number of characters for this string is: `1`
+
+### name Examples
+
+```json
+"FASTQC"
+```
+
+```json
+"BWA_MEM"
+```
+
+```json
+"SAMTOOLS_SORT"
+```
 
 ## codeChecksum
 

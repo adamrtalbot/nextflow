@@ -1,40 +1,21 @@
-# Workflow Runs Collection Schema
+# Single Workflow Run Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/workflowRuns
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/oneOf/0
 ```
 
-Collection of workflow execution instances with their parameters and configurations
+Single workflow run lineage data
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                   |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :----------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## workflowRuns Type
+## 0 Type
 
-`object[]` ([WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md))
+merged type ([Single Workflow Run](nextflow-lineage-v1beta1-schema-oneof-single-workflow-run.md))
 
-## workflowRuns Examples
+all of
 
-```json
-[
-  {
-    "workflow": {
-      "scriptFiles": [
-        {
-          "path": "file:///path/to/main.nf",
-          "checksum": {
-            "value": "abc123",
-            "algorithm": "nextflow",
-            "mode": "standard"
-          }
-        }
-      ]
-    },
-    "sessionId": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "workflow_run_1",
-    "params": [],
-    "config": {}
-  }
-]
-```
+* [WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md "check type definition")
+
+* [Untitled undefined type in Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-oneof-single-workflow-run-allof-1.md "check type definition")

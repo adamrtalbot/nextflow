@@ -1,10 +1,10 @@
 # Parameter Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/parameters/items
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/WorkflowOutput/properties/output/items
 ```
 
-Model Workflow and Task Parameters
+Model Workflow and Task Parameters including input/output channels and environment variables
 
 | Abstract            | Extensible | Status         | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                       |
 | :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------- |
@@ -24,7 +24,7 @@ Model Workflow and Task Parameters
 
 ## type
 
-The parameter type
+The parameter type - one of the supported Nextflow parameter types
 
 `type`
 
@@ -40,9 +40,49 @@ The parameter type
 
 `string`
 
+### type Constraints
+
+**enum**: the value of this property must be equal to one of the following values:
+
+| Value          | Explanation |
+| :------------- | :---------- |
+| `"stdout"`     |             |
+| `"stdin"`      |             |
+| `"path"`       |             |
+| `"val"`        |             |
+| `"env"`        |             |
+| `"eval"`       |             |
+| `"each"`       |             |
+| `"Path"`       |             |
+| `"String"`     |             |
+| `"Collection"` |             |
+| `"Map"`        |             |
+
+### type Examples
+
+```json
+"path"
+```
+
+```json
+"val"
+```
+
+```json
+"env"
+```
+
+```json
+"String"
+```
+
+```json
+"Collection"
+```
+
 ## name
 
-The parameter name
+The parameter name - must be a valid identifier
 
 `name`
 
@@ -58,9 +98,39 @@ The parameter name
 
 `string`
 
+### name Constraints
+
+**minimum length**: the minimum number of characters for this string is: `1`
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^[a-zA-Z_][a-zA-Z0-9_]*$
+```
+
+[try pattern](https://regexr.com/?expression=%5E%5Ba-zA-Z_%5D%5Ba-zA-Z0-9_%5D*%24 "try regular expression with regexr.com")
+
+### name Examples
+
+```json
+"input_file"
+```
+
+```json
+"output_dir"
+```
+
+```json
+"threads"
+```
+
+```json
+"sample_id"
+```
+
 ## value
 
-The parameter value - can be any type
+The parameter value - can be any type depending on the parameter type. For 'path' types, may contain file paths or lid:// URIs. For 'val' types, contains primitive values.
 
 `value`
 
@@ -75,3 +145,28 @@ The parameter value - can be any type
 ### value Type
 
 unknown ([Parameter Value](nextflow-lineage-v1beta1-schema-1-definitions-parameter-properties-parameter-value.md))
+
+### value Examples
+
+```json
+"file:///path/to/input.txt"
+```
+
+```json
+"lid://abc123/output.txt"
+```
+
+```json
+42
+```
+
+```json
+"sample_name"
+```
+
+```json
+[
+  "item1",
+  "item2"
+]
+```

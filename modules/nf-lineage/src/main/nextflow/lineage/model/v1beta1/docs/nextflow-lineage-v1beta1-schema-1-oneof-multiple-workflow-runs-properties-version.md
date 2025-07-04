@@ -1,15 +1,29 @@
-# Data Paths Schema
+# Untitled string in Nextflow Lineage Data Model v1beta1 Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/scriptFiles
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/oneOf/1/properties/version
 ```
 
-List of script files defining a workflow
+Lineage model version identifier - must be 'lineage/v1beta1'
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                       |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## scriptFiles Type
+## version Type
 
-`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
+`string`
+
+## version Constraints
+
+**constant**: the value of this property must be equal to:
+
+```json
+"lineage/v1beta1"
+```
+
+## version Examples
+
+```json
+"lineage/v1beta1"
+```

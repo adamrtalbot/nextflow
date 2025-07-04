@@ -1,7 +1,7 @@
 # DataPath Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/dataPaths/items
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/binEntries/items
 ```
 
 Models a data path which includes the path and a checksum to validate the content of the path
@@ -23,7 +23,7 @@ Models a data path which includes the path and a checksum to validate the conten
 
 ## path
 
-Real path of the output data
+Real path of the data as a URI (file://, s3://, etc.)
 
 `path`
 
@@ -38,6 +38,20 @@ Real path of the output data
 ### path Type
 
 `string`
+
+### path Constraints
+
+**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc3986 "check the specification")
+
+### path Examples
+
+```json
+"file:///path/to/script.nf"
+```
+
+```json
+"file:///path/to/input.txt"
+```
 
 ## checksum
 

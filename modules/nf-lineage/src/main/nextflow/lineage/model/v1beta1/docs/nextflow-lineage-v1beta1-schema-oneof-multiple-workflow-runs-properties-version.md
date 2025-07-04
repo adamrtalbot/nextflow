@@ -1,7 +1,7 @@
 # Untitled string in Nextflow Lineage Data Model v1beta1 Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/version
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/oneOf/1/properties/version
 ```
 
 Lineage model version identifier - must be 'lineage/v1beta1'

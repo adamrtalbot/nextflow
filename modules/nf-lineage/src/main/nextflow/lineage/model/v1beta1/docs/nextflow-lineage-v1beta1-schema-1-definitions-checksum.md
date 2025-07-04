@@ -1,7 +1,7 @@
 # Checksum Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/checksums/items
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/TaskRun/properties/codeChecksum
 ```
 
 Models a checksum including the value as well as the algorithm and mode used to compute it
@@ -10,11 +10,11 @@ Models a checksum including the value as well as the algorithm and mode used to 
 | :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | No           | Forbidden         | Forbidden             | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## items Type
+## codeChecksum Type
 
 `object` ([Checksum](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md))
 
-# items Properties
+# codeChecksum Properties
 
 | Property                | Type     | Required | Nullable       | Defined by                                                                                                                                                                                                                         |
 | :---------------------- | :------- | :------- | :------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -24,7 +24,7 @@ Models a checksum including the value as well as the algorithm and mode used to 
 
 ## value
 
-The checksum value
+The checksum value as a hexadecimal string
 
 `value`
 
@@ -40,9 +40,31 @@ The checksum value
 
 `string`
 
+### value Constraints
+
+**minimum length**: the minimum number of characters for this string is: `1`
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^[a-fA-F0-9]+$
+```
+
+[try pattern](https://regexr.com/?expression=%5E%5Ba-fA-F0-9%5D%2B%24 "try regular expression with regexr.com")
+
+### value Examples
+
+```json
+"a1b2c3d4e5f6"
+```
+
+```json
+"1234567890abcdef"
+```
+
 ## algorithm
 
-The algorithm used to compute the checksum
+The algorithm used to compute the checksum. Currently only 'nextflow' is supported.
 
 `algorithm`
 
@@ -58,9 +80,17 @@ The algorithm used to compute the checksum
 
 `string`
 
+### algorithm Constraints
+
+**enum**: the value of this property must be equal to one of the following values:
+
+| Value        | Explanation |
+| :----------- | :---------- |
+| `"nextflow"` |             |
+
 ## mode
 
-The mode used to compute the checksum
+The hashing mode used to compute the checksum
 
 `mode`
 
@@ -75,3 +105,32 @@ The mode used to compute the checksum
 ### mode Type
 
 `string`
+
+### mode Constraints
+
+**enum**: the value of this property must be equal to one of the following values:
+
+| Value        | Explanation |
+| :----------- | :---------- |
+| `"standard"` |             |
+| `"deep"`     |             |
+| `"lenient"`  |             |
+| `"sha256"`   |             |
+
+### mode Examples
+
+```json
+"standard"
+```
+
+```json
+"deep"
+```
+
+```json
+"lenient"
+```
+
+```json
+"sha256"
+```

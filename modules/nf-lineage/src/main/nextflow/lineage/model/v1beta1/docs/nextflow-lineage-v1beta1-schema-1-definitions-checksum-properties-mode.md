@@ -4,7 +4,7 @@
 https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Checksum/properties/mode
 ```
 
-The mode used to compute the checksum
+The hashing mode used to compute the checksum
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                       |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------- |
@@ -13,3 +13,32 @@ The mode used to compute the checksum
 ## mode Type
 
 `string`
+
+## mode Constraints
+
+**enum**: the value of this property must be equal to one of the following values:
+
+| Value        | Explanation |
+| :----------- | :---------- |
+| `"standard"` |             |
+| `"deep"`     |             |
+| `"lenient"`  |             |
+| `"sha256"`   |             |
+
+## mode Examples
+
+```json
+"standard"
+```
+
+```json
+"deep"
+```
+
+```json
+"lenient"
+```
+
+```json
+"sha256"
+```

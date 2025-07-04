@@ -26,7 +26,7 @@ Models a Workflow Execution including the workflow definition, runtime parameter
 
 ## workflow
 
-Models a workflow definition
+Models a workflow definition including source code and version control information
 
 `workflow`
 

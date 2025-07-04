@@ -1,23 +1,21 @@
-# Untitled string in Nextflow Lineage Data Model v1beta1 Schema
+# Single Workflow Run Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/version
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/oneOf/0
 ```
 
-Lineage model version
+Single workflow run lineage data
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                       |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## version Type
+## 0 Type
 
-`string`
+merged type ([Single Workflow Run](nextflow-lineage-v1beta1-schema-1-oneof-single-workflow-run.md))
 
-## version Constraints
+all of
 
-**constant**: the value of this property must be equal to:
+* [WorkflowRun](nextflow-lineage-v1beta1-schema-1-definitions-workflowrun.md "check type definition")
 
-```json
-"lineage/v1beta1"
-```
+* [Untitled undefined type in Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-oneof-single-workflow-run-allof-1.md "check type definition")

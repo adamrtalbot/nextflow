@@ -1,20 +1,20 @@
 # FileOutput Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/fileOutputs/items
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput
 ```
 
-Model a base class for workflow and task outputs
+Model a base class for workflow and task outputs representing real files with metadata
 
 | Abstract            | Extensible | Status         | Identifiable | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                       |
 | :------------------ | :--------- | :------------- | :----------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | No           | Forbidden         | Forbidden             | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## items Type
+## FileOutput Type
 
 `object` ([FileOutput](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput.md))
 
-# items Properties
+# FileOutput Properties
 
 | Property                    | Type      | Required | Nullable       | Defined by                                                                                                                                                                                                                                 |
 | :-------------------------- | :-------- | :------- | :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -22,7 +22,7 @@ Model a base class for workflow and task outputs
 | [checksum](#checksum)       | `object`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-checksum.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/checksum")                             |
 | [source](#source)           | `string`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput-properties-source.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/source")           |
 | [workflowRun](#workflowrun) | `string`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput-properties-workflowrun.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/workflowRun") |
-| [taskRun](#taskrun)         | `string`  | Optional | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput-properties-taskrun.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/taskRun")         |
+| [taskRun](#taskrun)         | `string`  | Optional | can be null    | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput-properties-taskrun.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/taskRun")         |
 | [size](#size)               | `integer` | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput-properties-size.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/size")               |
 | [createdAt](#createdat)     | `string`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput-properties-createdat.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/createdAt")     |
 | [modifiedAt](#modifiedat)   | `string`  | Required | cannot be null | [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput-properties-modifiedat.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/modifiedAt")   |
@@ -30,7 +30,7 @@ Model a base class for workflow and task outputs
 
 ## path
 
-Real path of the output data
+Real path of the output data as a URI (file://, s3://, etc.)
 
 `path`
 
@@ -45,6 +45,20 @@ Real path of the output data
 ### path Type
 
 `string`
+
+### path Constraints
+
+**URI**: the string must be a URI, according to [RFC 3986](https://tools.ietf.org/html/rfc3986 "check the specification")
+
+### path Examples
+
+```json
+"file:///path/to/output.txt"
+```
+
+```json
+"s3://bucket/output.txt"
+```
 
 ## checksum
 
@@ -66,7 +80,7 @@ Models a checksum including the value as well as the algorithm and mode used to 
 
 ## source
 
-Entity that generated the data (FileOutput, TaskRun, or WorkflowRun)
+Entity that generated the data - lid:// URI referencing FileOutput, TaskRun, or WorkflowRun
 
 `source`
 
@@ -82,9 +96,29 @@ Entity that generated the data (FileOutput, TaskRun, or WorkflowRun)
 
 `string`
 
+### source Constraints
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^lid://[a-fA-F0-9]+(/.*)?$
+```
+
+[try pattern](https://regexr.com/?expression=%5Elid%3A%2F%2F%5Ba-fA-F0-9%5D%2B\(%2F.*\)%3F%24 "try regular expression with regexr.com")
+
+### source Examples
+
+```json
+"lid://1234567890abcdef"
+```
+
+```json
+"lid://abc123/output.txt"
+```
+
 ## workflowRun
 
-Reference to the WorkflowRun that generated the data
+Reference to the WorkflowRun that generated the data - lid:// URI
 
 `workflowRun`
 
@@ -100,9 +134,25 @@ Reference to the WorkflowRun that generated the data
 
 `string`
 
+### workflowRun Constraints
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^lid://[a-fA-F0-9]+$
+```
+
+[try pattern](https://regexr.com/?expression=%5Elid%3A%2F%2F%5Ba-fA-F0-9%5D%2B%24 "try regular expression with regexr.com")
+
+### workflowRun Examples
+
+```json
+"lid://1234567890abcdef"
+```
+
 ## taskRun
 
-Reference to the task that generated the data
+Reference to the task that generated the data - lid:// URI (null for workflow-level outputs)
 
 `taskRun`
 
@@ -110,13 +160,33 @@ Reference to the task that generated the data
 
 * Type: `string`
 
-* cannot be null
+* can be null
 
 * defined in: [Nextflow Lineage Data Model v1beta1](nextflow-lineage-v1beta1-schema-1-definitions-fileoutput-properties-taskrun.md "https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/FileOutput/properties/taskRun")
 
 ### taskRun Type
 
 `string`
+
+### taskRun Constraints
+
+**pattern**: the string must match the following regular expression:&#x20;
+
+```regexp
+^lid://[a-fA-F0-9]+$
+```
+
+[try pattern](https://regexr.com/?expression=%5Elid%3A%2F%2F%5Ba-fA-F0-9%5D%2B%24 "try regular expression with regexr.com")
+
+### taskRun Examples
+
+```json
+"lid://abc123def456"
+```
+
+```json
+null
+```
 
 ## size
 

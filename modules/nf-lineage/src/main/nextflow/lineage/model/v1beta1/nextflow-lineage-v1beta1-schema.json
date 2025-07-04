@@ -498,133 +498,81 @@
             "additionalProperties": false
         }
     },
-    "properties": {
-        "version": {
-            "type": "string",
-            "const": "lineage/v1beta1",
-            "description": "Lineage model version identifier - must be 'lineage/v1beta1'",
-            "examples": [
-                "lineage/v1beta1"
-            ]
-        },
-        "checksums": {
-            "type": "array",
-            "title": "Checksums Collection",
-            "items": {
-                "$ref": "#/definitions/Checksum"
-            },
-            "description": "Collection of file checksums for validation and integrity checking",
-            "examples": [
-                [
-                    {
-                        "value": "a1b2c3d4e5f6",
-                        "algorithm": "nextflow",
-                        "mode": "standard"
-                    }
-                ]
-            ]
-        },
-        "dataPaths": {
-            "type": "array",
-            "title": "Data Paths Collection",
-            "items": {
-                "$ref": "#/definitions/DataPath"
-            },
-            "description": "Collection of data file paths with their associated checksums",
-            "examples": [
-                [
-                    {
-                        "path": "file:///path/to/input.txt",
-                        "checksum": {
-                            "value": "abc123",
-                            "algorithm": "nextflow",
-                            "mode": "standard"
-                        }
-                    }
-                ]
-            ]
-        },
-        "parameters": {
-            "type": "array",
-            "title": "Parameters Collection",
-            "items": {
-                "$ref": "#/definitions/Parameter"
-            },
-            "description": "Collection of parameters"
-        },
-        "fileOutputs": {
-            "type": "array",
-            "title": "File Outputs Collection",
-            "items": {
-                "$ref": "#/definitions/FileOutput"
-            },
-            "description": "Collection of file outputs"
-        },
-        "taskOutputs": {
-            "type": "array",
-            "title": "Task Outputs Collection",
-            "items": {
-                "$ref": "#/definitions/TaskOutput"
-            },
-            "description": "Collection of task outputs"
-        },
-        "taskRuns": {
-            "type": "array",
-            "title": "Task Runs Collection",
-            "items": {
-                "$ref": "#/definitions/TaskRun"
-            },
-            "description": "Collection of task runs"
-        },
-        "workflows": {
-            "type": "array",
-            "title": "Workflows Collection",
-            "items": {
-                "$ref": "#/definitions/Workflow"
-            },
-            "description": "Collection of workflows"
-        },
-        "workflowOutputs": {
-            "type": "array",
-            "title": "Workflow Outputs Collection",
-            "items": {
-                "$ref": "#/definitions/WorkflowOutput"
-            },
-            "description": "Collection of workflow outputs"
-        },
-        "workflowRuns": {
-            "type": "array",
-            "title": "Workflow Runs Collection",
-            "items": {
-                "$ref": "#/definitions/WorkflowRun"
-            },
-            "description": "Collection of workflow execution instances with their parameters and configurations",
-            "examples": [
-                [
-                    {
-                        "workflow": {
-                            "scriptFiles": [
-                                {
-                                    "path": "file:///path/to/main.nf",
-                                    "checksum": {
-                                        "value": "abc123",
-                                        "algorithm": "nextflow",
-                                        "mode": "standard"
-                                    }
-                                }
+    "oneOf": [
+        {
+            "title": "Single Workflow Run",
+            "description": "Single workflow run lineage data",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/WorkflowRun"
+                },
+                {
+                    "properties": {
+                        "version": {
+                            "type": "string",
+                            "const": "lineage/v1beta1",
+                            "description": "Lineage model version identifier - must be 'lineage/v1beta1'",
+                            "examples": [
+                                "lineage/v1beta1"
                             ]
-                        },
-                        "sessionId": "550e8400-e29b-41d4-a716-446655440000",
-                        "name": "workflow_run_1",
-                        "params": [],
-                        "config": {}
-                    }
-                ]
+                        }
+                    },
+                    "required": [
+                        "version"
+                    ]
+                }
             ]
+        },
+        {
+            "title": "Multiple Workflow Runs",
+            "description": "Multiple workflow runs lineage data",
+            "type": "object",
+            "properties": {
+                "version": {
+                    "type": "string",
+                    "const": "lineage/v1beta1",
+                    "description": "Lineage model version identifier - must be 'lineage/v1beta1'",
+                    "examples": [
+                        "lineage/v1beta1"
+                    ]
+                },
+                "workflowRuns": {
+                    "type": "array",
+                    "title": "Workflow Runs Collection",
+                    "items": {
+                        "$ref": "#/definitions/WorkflowRun"
+                    },
+                    "minItems": 1,
+                    "description": "Collection of workflow execution instances with their parameters and configurations",
+                    "examples": [
+                        [
+                            {
+                                "workflow": {
+                                    "scriptFiles": [
+                                        {
+                                            "path": "file:///path/to/main.nf",
+                                            "checksum": {
+                                                "value": "abc123",
+                                                "algorithm": "nextflow",
+                                                "mode": "standard"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "sessionId": "550e8400-e29b-41d4-a716-446655440000",
+                                "name": "workflow_run_1",
+                                "params": [],
+                                "config": {}
+                            }
+                        ]
+                    ]
+                }
+            },
+            "required": [
+                "version",
+                "workflowRuns"
+            ],
+            "additionalProperties": false
         }
-    },
-    "required": [
-        "version"
-    ],
-    "additionalProperties": false
+    ]
 }

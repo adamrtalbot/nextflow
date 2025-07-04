@@ -1,15 +1,34 @@
-# Task Outputs Collection Schema
+# Script Files Schema
 
 ```txt
-https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/properties/taskOutputs
+https://nextflow.io/schemas/lineage/v1beta1/lineage-schema.json#/definitions/Workflow/properties/scriptFiles
 ```
 
-Collection of task outputs
+List of script files defining a workflow (main script and modules)
 
 | Abstract            | Extensible | Status         | Identifiable            | Custom Properties | Additional Properties | Access Restrictions | Defined In                                                                                                       |
 | :------------------ | :--------- | :------------- | :---------------------- | :---------------- | :-------------------- | :------------------ | :--------------------------------------------------------------------------------------------------------------- |
 | Can be instantiated | No         | Unknown status | Unknown identifiability | Forbidden         | Allowed               | none                | [nextflow-lineage-v1beta1-schema.json\*](../out/out/nextflow-lineage-v1beta1-schema.json "open original schema") |
 
-## taskOutputs Type
+## scriptFiles Type
 
-`object[]` ([TaskOutput](nextflow-lineage-v1beta1-schema-1-definitions-taskoutput.md))
+`object[]` ([DataPath](nextflow-lineage-v1beta1-schema-1-definitions-datapath.md))
+
+## scriptFiles Constraints
+
+**minimum number of items**: the minimum number of items for this array is: `1`
+
+## scriptFiles Examples
+
+```json
+[
+  {
+    "path": "file:///path/to/main.nf",
+    "checksum": {
+      "value": "abc123",
+      "algorithm": "nextflow",
+      "mode": "standard"
+    }
+  }
+]
+```
