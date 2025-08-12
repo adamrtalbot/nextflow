@@ -450,7 +450,7 @@ The following settings are available:
 `azure.batch.terminateJobsOnCompletion`
 : :::{versionadded} 23.05.0-edge
   :::
-: When the workflow completes, set all jobs to terminate on task completion (default: `true`).
+: Set all jobs to terminate on task completion (default: `true`).
 
 `azure.managedIdentity.clientId`
 : The client ID for an Azure [managed identity](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview). Defaults to environment variable `AZURE_MANAGED_IDENTITY_USER`.
@@ -706,9 +706,11 @@ The following settings are available:
 `executor.jobName`
 : *Used only by grid executors and Google Batch.*
 : Determines the name of jobs submitted to the underlying cluster executor:
+
   ```groovy
   executor.jobName = { "$task.name - $task.hash" }
   ```
+
 : The job name should satisfy the validation constraints of the underlying scheduler.
 
 `executor.killBatchSize`
@@ -936,9 +938,9 @@ The following settings are available:
 
 : You can specify the network as a full or partial URL. For example, the following are all valid URLs:
 
-  - `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`
-  - `projects/{project}/global/networks/{network}`
-  - `global/networks/{network}`
+- `https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}`
+- `projects/{project}/global/networks/{network}`
+- `global/networks/{network}`
 
 `google.batch.networkTags`
 : The [network tags](https://cloud.google.com/vpc/docs/add-remove-network-tags) to be applied to the instances created by Google Batch jobs (e.g., `['allow-ssh', 'allow-http']`).
@@ -956,9 +958,9 @@ The following settings are available:
 
 : You can specify the subnetwork as a full or partial URL. For example, the following are all valid URLs:
 
-  - `https://www.googleapis.com/compute/v1/projects/{project}/regions/{region}/subnetworks/{subnetwork}`
-  - `projects/{project}/regions/{region}/subnetworks/{subnetwork}`
-  - `regions/{region}/subnetworks/{subnetwork}`
+- `https://www.googleapis.com/compute/v1/projects/{project}/regions/{region}/subnetworks/{subnetwork}`
+- `projects/{project}/regions/{region}/subnetworks/{subnetwork}`
+- `regions/{region}/subnetworks/{subnetwork}`
 
 `google.batch.usePrivateAddress`
 : Do not provision public IP addresses for VMs, such that they only have an internal IP address (default: `false`).
@@ -997,16 +999,17 @@ The following settings are available:
 : Map of options for the Kubernetes HTTP client.
 : If this option is specified, it will be used instead of `.kube/config`.
 : The following options are available:
-  - `server`
-  - `token`
-  - `tokenFile`
-  - `verifySsl`
-  - `sslCert`
-  - `sslCertFile`
-  - `clientCert`
-  - `clientCertFile`
-  - `clientKey`
-  - `clientKeyFile`
+
+- `server`
+- `token`
+- `tokenFile`
+- `verifySsl`
+- `sslCert`
+- `sslCertFile`
+- `clientCert`
+- `clientCertFile`
+- `clientKey`
+- `clientKeyFile`
 
 `k8s.computeResourceType`
 : :::{versionadded} 22.05.0-edge
@@ -1736,6 +1739,7 @@ The following settings are available:
 : Specify arbitrary tags for published files.
 
 : For example:
+
   ```groovy
   workflow.output.tags = [FOO: 'hello', BAR: 'world']
   ```
