@@ -1022,4 +1022,128 @@ class AzBatchServiceTest extends Specification {
         ]
     }
 
+    def 'should create job with auto-termination when terminateJobsOnCompletion is enabled' () {
+        given:
+        def CONFIG = [batch: [terminateJobsOnCompletion: true]]
+        def exec = createExecutor(CONFIG)
+        def service = Spy(new AzBatchService(exec))
+        def task = Mock(TaskRun) {
+            getProcessor() >> Mock(TaskProcessor) {
+                getName() >> 'test-process'
+            }
+        }
+        def poolId = 'test-pool'
+
+        when:
+        def jobId = service.createJob0(poolId, task)
+
+        then:
+        1 * service.apply(_) >> { args ->
+            def action = args[0]
+            def content = action.get()
+            assert content instanceof com.azure.compute.batch.models.BatchJobCreateContent
+            assert content.onAllTasksComplete == com.azure.compute.batch.models.OnAllBatchTasksComplete.TERMINATE_JOB
+            return null
+        }
+        and:
+        jobId != null
+        jobId.startsWith('job-')
+        jobId.contains('test-process')
+    }
+
+    def 'should create job without auto-termination when terminateJobsOnCompletion is disabled' () {
+        given:
+        def CONFIG = [batch: [terminateJobsOnCompletion: false]]
+        def exec = createExecutor(CONFIG)
+        def service = Spy(new AzBatchService(exec))
+        def task = Mock(TaskRun) {
+            getProcessor() >> Mock(TaskProcessor) {
+                getName() >> 'test-process'
+            }
+        }
+        def poolId = 'test-pool'
+
+        when:
+        def jobId = service.createJob0(poolId, task)
+
+        then:
+        1 * service.apply(_) >> { args ->
+            def action = args[0]
+            def content = action.get()
+            assert content instanceof com.azure.compute.batch.models.BatchJobCreateContent
+            assert content.onAllTasksComplete == null // Should not be set
+            return null
+        }
+        and:
+        jobId != null
+    }
+
+    def 'should handle 409 conflict and recreate job during task submission' () {
+        given:
+        def CONFIG = [batch: [terminateJobsOnCompletion: true]]
+        def exec = createExecutor(CONFIG)
+        def service = Spy(new AzBatchService(exec))
+        def task = Mock(TaskRun) {
+            getProcessor() >> Mock(TaskProcessor) {
+                getName() >> 'test-process'
+            }
+        }
+        def taskToAdd = Mock(com.azure.compute.batch.models.BatchTaskCreateContent) {
+            getId() >> 'test-task'
+        }
+        def poolId = 'test-pool'
+        def jobId = 'original-job'
+
+        // Mock 409 conflict response
+        def mockResponse = Mock(com.azure.core.http.HttpResponse) {
+            getStatusCode() >> 409
+        }
+        def conflictException = new com.azure.core.exception.HttpResponseException("Job terminated", mockResponse)
+
+        when:
+        def result = service.submitTaskToJob(jobId, taskToAdd, poolId, task)
+
+        then:
+        // First call should fail with 409
+        1 * service.apply(_) >> { throw conflictException }
+        // Then recreateJobForTask should be called
+        1 * service.recreateJobForTask(poolId, task, taskToAdd) >> new AzTaskKey('new-job', 'test-task')
+        and:
+        result.jobId == 'new-job'
+        result.taskId == 'test-task'
+    }
+
+    def 'should update job mapping when recreating job for terminated job' () {
+        given:
+        def CONFIG = [batch: [terminateJobsOnCompletion: true]]
+        def exec = createExecutor(CONFIG)
+        def service = Spy(new AzBatchService(exec))
+        def processor = Mock(TaskProcessor) {
+            getName() >> 'test-process'
+        }
+        def task = Mock(TaskRun) {
+            getProcessor() >> processor
+        }
+        def taskToAdd = Mock(com.azure.compute.batch.models.BatchTaskCreateContent) {
+            getId() >> 'test-task'
+        }
+        def poolId = 'test-pool'
+
+        when:
+        def result = service.recreateJobForTask(poolId, task, taskToAdd)
+
+        then:
+        // Should create new job
+        1 * service.createJob0(poolId, task) >> 'new-job-id'
+        // Should submit task to new job
+        1 * service.apply(_) >> null
+        and:
+        // Should update job mapping
+        def mapKey = new AzJobKey(processor, poolId)
+        service.allJobIds[mapKey] == 'new-job-id'
+        and:
+        result.jobId == 'new-job-id'
+        result.taskId == 'test-task'
+    }
+
 }

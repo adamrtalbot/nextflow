@@ -102,6 +102,33 @@ import reactor.core.publisher.Flux
 /**
  * Implements Azure Batch operations for Nextflow executor
  *
+ * AZURE BATCH JOB AUTO-TERMINATION STRATEGY:
+ * 
+ * This service implements an eager auto-termination strategy to prevent "job leak" where
+ * Azure Batch jobs remain active indefinitely, consuming quota even after all tasks complete.
+ * 
+ * The strategy works at multiple levels:
+ * 
+ * 1. EAGER AUTO-TERMINATION (Primary mechanism):
+ *    - When jobs are created (createJob0), they are configured with OnAllTasksComplete.TERMINATE_JOB
+ *    - This tells Azure Batch to automatically terminate the job as soon as all tasks finish
+ *    - Controlled by the 'terminateJobsOnCompletion' setting (enabled by default)
+ *    - Benefits: Immediate quota cleanup, works even if Nextflow crashes
+ * 
+ * 2. CONFLICT RESOLUTION (Secondary mechanism):
+ *    - Since jobs auto-terminate, subsequent task submissions may hit a 409 Conflict
+ *    - submitTaskToJob() detects these conflicts and automatically creates new jobs
+ *    - recreateJobForTask() ensures the new job is also configured for auto-termination
+ *    - This allows tasks to be submitted even after the original job terminates
+ * 
+ * 3. GRACEFUL SHUTDOWN (Fallback mechanism):
+ *    - terminateJobs() is called during Nextflow shutdown as a fallback
+ *    - Updates any jobs that weren't configured for auto-termination
+ *    - Ensures backward compatibility and handles edge cases
+ * 
+ * This multi-layered approach ensures robust job cleanup while maintaining efficient
+ * task batching and submission throughput.
+ *
  * @author Paolo Di Tommaso <paolo.ditommaso@gmail.com>
  */
 @Slf4j
@@ -416,6 +443,26 @@ class AzBatchService implements Closeable {
         new CloudMachineInfo(type: type, priceModel: PriceModel.standard, zone: config.batch().location)
     }
 
+    /**
+     * Get or create an Azure Batch job for the given pool and task.
+     * 
+     * JOB REUSE STRATEGY:
+     * Jobs are cached per (processor, poolId) pair to allow multiple tasks from the same
+     * process to be submitted to the same job. This improves efficiency and resource utilization.
+     * 
+     * With eager auto-termination enabled, the lifecycle works as follows:
+     * 1. First task from a process creates a new job (configured for auto-termination)
+     * 2. Subsequent tasks from the same process reuse the existing job
+     * 3. When all tasks complete, the job automatically terminates
+     * 4. If more tasks arrive after termination, submitTaskToJob() will handle the 409 conflict
+     *    and recreateJobForTask() will create a fresh job
+     * 
+     * This approach balances efficiency (task batching) with resource cleanup (auto-termination).
+     * 
+     * @param poolId The Azure Batch pool ID where the job should run
+     * @param task The task that needs to be executed (used for processor identification)
+     * @return The job ID to use for task submission
+     */
     synchronized String getOrCreateJob(String poolId, TaskRun task) {
         // Use the same job Id for the same Process,PoolId pair
         // The Pool is added to allow using different queue names (corresponding
@@ -443,12 +490,28 @@ class AzBatchService implements Closeable {
 
     protected String createJob0(String poolId, TaskRun task) {
         log.debug "[AZURE BATCH] created job for ${task.processor.name} with pool ${poolId}"
+        
         // create a batch job
         final jobId = makeJobId(task)
         final content = new BatchJobCreateContent(jobId, new BatchPoolInfo(poolId: poolId))
 
+        // Set job constraints (max wall clock time) if specified
         if (config.batch().jobMaxWallClockTime) {
             content.setConstraints(createJobConstraints(config.batch().jobMaxWallClockTime))
+        }
+        
+        // EAGER AUTO-TERMINATION LOGIC:
+        // If terminateJobsOnCompletion is enabled (which is the default), configure the job
+        // to automatically terminate when all tasks are complete. This prevents "job leak" 
+        // where jobs remain active indefinitely if Nextflow doesn't reach graceful shutdown.
+        // 
+        // Benefits of this approach:
+        // 1. Jobs terminate eagerly as soon as all tasks finish, freeing up quota immediately
+        // 2. Behavior is controlled by Azure Batch service, so works even if Nextflow crashes
+        // 3. From user perspective, little changes except faster quota cleanup
+        if (config.batch().terminateJobsOnCompletion) {
+            content.setOnAllTasksComplete(OnAllBatchTasksComplete.TERMINATE_JOB)
+            log.trace "[AZURE BATCH] Job ${jobId} configured for auto-termination on task completion"
         }
         
         apply(() -> client.createJob(content))
@@ -569,8 +632,74 @@ class AzBatchService implements Closeable {
 
     AzTaskKey runTask(String poolId, String jobId, TaskRun task) {
         final taskToAdd = createTask(poolId, jobId, task)
-        apply(() -> client.createTask(jobId, taskToAdd))
-        return new AzTaskKey(jobId, taskToAdd.getId())
+        return submitTaskToJob(jobId, taskToAdd, poolId, task)
+    }
+
+    /**
+     * Submit a task to an Azure Batch job with automatic handling of terminated jobs.
+     * 
+     * CONFLICT HANDLING LOGIC:
+     * When a job is set to auto-terminate (OnAllTasksComplete.TERMINATE_JOB), it may transition 
+     * to "terminated" state before all planned tasks are submitted. This can happen when:
+     * 1. Tasks complete very quickly
+     * 2. There's a delay in task submission due to throttling or network issues
+     * 3. The job only had a few tasks and they finished before subsequent tasks were queued
+     * 
+     * When we try to submit a task to a terminated job, Azure Batch returns a 409 Conflict.
+     * This method handles that scenario by creating a new job and retrying the submission.
+     * 
+     * @param jobId The target job ID
+     * @param taskToAdd The task to submit  
+     * @param poolId The pool ID for potential job recreation
+     * @param task The original TaskRun for potential job recreation
+     * @return The task key for the submitted task
+     */
+    protected AzTaskKey submitTaskToJob(String jobId, BatchTaskCreateContent taskToAdd, String poolId, TaskRun task) {
+        try {
+            apply(() -> client.createTask(jobId, taskToAdd))
+            return new AzTaskKey(jobId, taskToAdd.getId())
+        }
+        catch (HttpResponseException e) {
+            if (e.response.statusCode == 409) {
+                // Job may be terminated - create a new job and retry
+                log.debug "[AZURE BATCH] Job ${jobId} appears terminated (409 conflict), creating new job for task ${taskToAdd.getId()}"
+                return recreateJobForTask(poolId, task, taskToAdd)
+            }
+            throw e
+        }
+    }
+
+    /**
+     * Create a new job when the original job is terminated and submit the task to it.
+     * 
+     * JOB RECREATION LOGIC:
+     * When the original job has terminated but we still have tasks to submit, we need to create
+     * a new job. The new job will also be configured with auto-termination enabled if the
+     * terminateJobsOnCompletion setting is active.
+     * 
+     * This ensures that:
+     * 1. Tasks can still be submitted even after the original job terminates
+     * 2. The new job will also auto-terminate, maintaining the same behavior
+     * 3. The job key mapping is updated to point to the new job
+     * 
+     * @param poolId The pool ID for the new job
+     * @param task The task run (used for job naming and processor mapping)
+     * @param taskToAdd The task content to submit
+     * @return The task key for the submitted task in the new job
+     */
+    protected AzTaskKey recreateJobForTask(String poolId, TaskRun task, BatchTaskCreateContent taskToAdd) {
+        // Create a new job with the same configuration
+        final newJobId = createJob0(poolId, task)
+        
+        // Update the job mapping to point to the new job
+        final mapKey = new AzJobKey(task.processor, poolId)
+        allJobIds[mapKey] = newJobId
+        
+        log.debug "[AZURE BATCH] Created new job ${newJobId} to replace terminated job for process ${task.processor.name}"
+        
+        // Submit the task to the new job
+        apply(() -> client.createTask(newJobId, taskToAdd))
+        return new AzTaskKey(newJobId, taskToAdd.getId())
     }
 
     protected List<String> getShareVolumeMounts(AzVmPoolSpec spec) {
@@ -978,6 +1107,26 @@ class AzBatchService implements Closeable {
 
     /**
      * Set all jobs to terminate on completion.
+     * 
+     * LEGACY TERMINATION LOGIC:
+     * This method is called during Nextflow's graceful shutdown to ensure all Azure Batch jobs
+     * are set to terminate when their tasks complete. With the new eager auto-termination logic
+     * (implemented in createJob0), most jobs will already be configured for auto-termination.
+     * 
+     * However, this method remains important for:
+     * 1. Jobs created before the eager auto-termination feature was implemented
+     * 2. Jobs where terminateJobsOnCompletion was disabled at creation time
+     * 3. Ensuring backward compatibility
+     * 4. Providing a fallback in case the initial auto-termination setting failed
+     * 
+     * RELATIONSHIP WITH EAGER AUTO-TERMINATION:
+     * - New jobs (created by createJob0): Already have OnAllTasksComplete.TERMINATE_JOB set
+     * - This method: Updates existing jobs that may not have been configured for auto-termination
+     * - Together they ensure comprehensive job cleanup regardless of when jobs were created
+     * 
+     * ERROR HANDLING:
+     * - 409 conflicts are expected and logged as debug (job already terminated)
+     * - Other errors are logged as warnings but don't fail the shutdown process
      */
     protected void terminateJobs() {
         for( String jobId : allJobIds.values() ) {
